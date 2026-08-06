@@ -252,12 +252,12 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
       <div class="row2">
         <div class="field" id="assigned-to-field" style="display:none">
           <label>Assigned To <span class="req">*</span></label>
-          <select id="t-assigned-to">
-            <option value="">— select technician —</option>
+          <input type="text" id="t-assigned-to" placeholder="Enter technician name…" list="t-assigned-list">
+          <datalist id="t-assigned-list">
             <option>Ajeeth</option><option>Hassan</option><option>Vishal</option>
             <option>Ajeet Kumar</option><option>Hasan</option>
             <option>Prem / Vishal</option><option>Vishal / Ajeeth</option><option>Vishal / Hasan</option>
-          </select>
+          </datalist>
         </div>
       </div>
       <div class="row2">
@@ -1009,7 +1009,7 @@ function tGeneratePDF(fname){
   field2('Complaint Date Received', tv('t-date'), 'Received Time', fmtTime12(tv('t-date-time')));
   field2('Attended On', tv('t-attended'), 'Attended Time', fmtTime12(tv('t-attended-time')));
   field2('Assigned To', tv('t-assigned-to'), 'Submitted by (SE)', tv('t-se'));
-  field2('Month', tv('t-month'), 'Area', tv('t-area'));
+  field2('Complaint Details', tv('t-month'), 'Area', tv('t-area'));
 
   // ── 2. CLIENT & LOCATION ─────────────────────────────
   band('CLIENT & LOCATION');
