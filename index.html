@@ -1,0 +1,2775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#0C3B6E">
+<title>BSC App — Bukamal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="window.__xlsxFailed=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="window.__jspdfFailed=true"></script>
+<style>
+:root{
+  --navy:#0C3B6E;--blue:#1565C0;--blue2:#1976D2;--blue-lt:#E3F2FD;
+  --green:#2E7D32;--green-lt:#E8F5E9;--amber:#E65100;--amber-lt:#FFF3E0;
+  --red:#C62828;--red-lt:#FFEBEE;--purple:#6A1B9A;--purple-lt:#F3E5F5;
+  --bg:#F0F4F8;--card:#FFF;--border:#DDE3EA;
+  --t1:#0D1B2A;--t2:#4A5568;--t3:#8A96A3;
+  --r:12px;--rs:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{min-height:100%;-webkit-text-size-adjust:100%}
+body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;min-height:100dvh;font-size:15px;line-height:1.5}
+.screen{display:none;min-height:100vh;min-height:100dvh}
+.screen.active{display:block}
+
+/* LOGIN */
+#screen-login{background:linear-gradient(155deg,#0C3B6E 0%,#1565C0 55%,#1976D2 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
+#screen-login.active{display:flex}
+.login-logo{font-size:58px;margin-bottom:10px}
+.login-title{color:#fff;font-size:28px;font-weight:700;letter-spacing:-.02em;text-align:center}
+.login-sub{color:rgba(255,255,255,.6);font-size:13px;margin-bottom:36px;text-align:center}
+.login-cards{display:flex;flex-direction:column;gap:14px;width:100%;max-width:360px}
+.role-card{background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.25);border-radius:16px;
+  padding:22px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px}
+.role-card:active{background:rgba(255,255,255,.22);transform:scale(.98)}
+.role-icon{font-size:34px;flex-shrink:0}
+.role-name{color:#fff;font-size:16px;font-weight:700;margin-bottom:3px}
+.role-desc{color:rgba(255,255,255,.6);font-size:12px}
+.role-arrow{color:rgba(255,255,255,.4);font-size:22px;margin-left:auto}
+.login-footer{color:rgba(255,255,255,.3);font-size:11px;margin-top:28px;text-align:center}
+
+/* TOP BAR */
+.topbar{background:linear-gradient(135deg,#0C3B6E 0%,#1565C0 100%);padding:0 14px;
+  padding-left:calc(14px + env(safe-area-inset-left));padding-right:calc(14px + env(safe-area-inset-right));
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;position:-webkit-sticky;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(12,59,110,.35)}
+.topbar.purple{background:linear-gradient(135deg,#4A148C 0%,#6A1B9A 100%)}
+.tb-left{display:flex;flex-direction:column}
+.tb-title{color:#fff;font-size:16px;font-weight:700;letter-spacing:-.01em}
+.tb-sub{color:rgba(255,255,255,.6);font-size:11px}
+.tb-right{display:flex;align-items:center;gap:6px}
+.tb-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;
+  font-family:Inter,sans-serif;font-size:11px;font-weight:600;padding:5px 9px;
+  border-radius:6px;cursor:pointer;white-space:nowrap}
+
+/* CARDS */
+.wrap{max-width:720px;margin:0 auto;padding:12px 12px 155px;
+  padding-bottom:calc(155px + env(safe-area-inset-bottom));
+  padding-left:calc(12px + env(safe-area-inset-left));
+  padding-right:calc(12px + env(safe-area-inset-right))}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+.card-head{padding:11px 16px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
+.card-head .icon{font-size:18px}
+.card-head h2{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em}
+.card-body{padding:14px 16px}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px;letter-spacing:.01em}
+.field label .req{color:#E53935}
+.field input,.field select,.field textarea{
+  width:100%;font-family:'Inter',sans-serif;font-size:16px;color:var(--t1);
+  background:#F8FAFC;border:1.5px solid var(--border);border-radius:var(--rs);
+  padding:11px 13px;-webkit-appearance:none;appearance:none;transition:all .15s}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--blue2);background:#fff;box-shadow:0 0 0 3px rgba(25,118,210,.1)}
+.field textarea{min-height:80px;resize:vertical;line-height:1.6}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A96A3'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* STATUS BUTTONS */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st{padding:12px 8px;border-radius:var(--rs);border:2px solid var(--border);background:#F8FAFC;
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;
+  text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.st .icon{font-size:20px}
+.st.on-repair{background:var(--green-lt);border-color:var(--green);color:var(--green)}
+.st.on-replace{background:var(--amber-lt);border-color:var(--amber);color:var(--amber)}
+.st.on-void{background:var(--red-lt);border-color:var(--red);color:var(--red)}
+.st.on-noproblem{background:var(--blue-lt);border-color:var(--blue2);color:var(--blue)}
+
+/* SPARE PARTS */
+.parts-wrap{display:flex;flex-direction:column;gap:7px}
+.part-row{display:flex;align-items:center;gap:8px}
+.part{flex:1;padding:10px 13px;border-radius:var(--rs);border:1.5px solid var(--border);
+  background:#F8FAFC;font-size:13px;font-weight:500;color:var(--t2);
+  cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;text-align:left}
+.part.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.part-qty{width:68px;flex-shrink:0;font-family:'Inter',sans-serif;font-size:16px;color:var(--t1);
+  background:#F8FAFC;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 8px;
+  text-align:center;-webkit-appearance:none;appearance:none;transition:all .15s;display:none}
+.part-qty.show{display:block}
+.part-qty:focus{outline:none;border-color:var(--blue2);background:#fff;box-shadow:0 0 0 3px rgba(25,118,210,.1)}
+
+/* ACTION BAR */
+.abar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1.5px solid var(--border);
+  padding:10px 14px;padding-left:calc(14px + env(safe-area-inset-left));padding-right:calc(14px + env(safe-area-inset-right));padding-bottom:max(10px,env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:8px;z-index:200;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.abar-row{display:flex;gap:8px;width:100%;max-width:696px;margin-left:auto;margin-right:auto}
+.btn-save{flex:1;padding:12px 6px;color:#fff;border:none;border-radius:var(--r);
+  font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer}
+.btn-navy{background:var(--navy)} .btn-blue{background:var(--blue)}
+.btn-green{background:var(--green)} .btn-purple{background:var(--purple)}
+.btn-wa{background:#25D366;color:#fff;border:none;border-radius:var(--r);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;padding:0 14px;height:44px;
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:700;flex:1}
+.btn-new{background:var(--bg);color:var(--t2);border:1.5px solid var(--border);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;gap:6px;padding:0 14px;height:44px;
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;flex:1}
+
+/* WORKFLOW ROLES */
+.role-sales { background: linear-gradient(135deg,#1B5E20,#2E7D32) !important; }
+.role-coord { background: linear-gradient(135deg,#4A148C,#7B1FA2) !important; }
+.role-tech-card { background: linear-gradient(135deg,#0C3B6E,#1565C0) !important; }
+.role-badge { display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em }
+.badge-pending  { background:#FFF3E0;color:#E65100 }
+.badge-assigned { background:#E3F2FD;color:#1565C0 }
+.badge-completed{ background:#E8F5E9;color:#2E7D32 }
+.section-locked { opacity:.6;pointer-events:none;position:relative }
+.section-locked::after { content:'🔒 Filled by coordinator';position:absolute;top:8px;right:10px;font-size:10px;color:var(--t3) }
+.workflow-bar { background:#F8FAFC;border-top:1px solid var(--border);padding:8px 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap }
+.step-dot { width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px }
+.step-done { background:#2E7D32 }
+.step-active { background:#1565C0 }
+.step-wait { background:#BDBDBD }
+
+/* DESKTOP POINTER FEEDBACK — mouse only, excluded on touchscreens */
+@media (hover:hover) and (pointer:fine){
+  .role-card{transition:background .15s,transform .15s}
+  .role-card:hover{background:rgba(255,255,255,.22)}
+  .st:hover,.part:hover,.rcard:hover{filter:brightness(.97)}
+  .btn-save:hover,.btn-wa:hover,.btn-new:hover,.tb-btn:hover,
+  .modal-btns button:hover{filter:brightness(1.1)}
+  .part:hover{border-color:var(--blue2)}
+}
+
+/* TOAST */
+.toast{position:fixed;bottom:148px;left:50%;transform:translateX(-50%);background:var(--t1);color:#fff;
+  padding:10px 20px;border-radius:24px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;
+  pointer-events:none;z-index:500;max-width:90vw;text-align:center;white-space:normal}
+.toast.show{opacity:1}
+
+/* MODALS */
+.modal-bg{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:flex-end}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:520px;
+  margin:0 auto;max-height:88vh;max-height:88dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:28px}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--navy)}
+.modal-btns{display:flex;gap:8px;margin-top:14px}
+.modal-btns button{flex:1;padding:13px;border-radius:var(--rs);border:none;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.btn-confirm{background:var(--navy);color:#fff}
+.btn-cancel{background:var(--bg);color:var(--t2)}
+.rcard{border:1.5px solid var(--border);border-radius:var(--rs);padding:12px;background:#F8FAFC;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<!-- ══════ LOGIN ══════ -->
+<div class="screen active" id="screen-login">
+  <div class="login-logo">🏢</div>
+  <div class="login-title">BSC App</div>
+  <div class="login-sub">Bukamal · Service Platform</div>
+  <div class="login-cards">
+    <div class="role-card role-sales" onclick="enterRole('sales')">
+      <span class="role-icon">📞</span>
+      <div><div class="role-name">Sales Team</div>
+        <div class="role-desc">Log new complaint · Status: Pending</div></div>
+      <span class="role-arrow">›</span>
+    </div>
+    <div class="role-card role-coord" onclick="enterRole('coord')">
+      <span class="role-icon">🗂️</span>
+      <div><div class="role-name">Sales Coordinator</div>
+        <div class="role-desc">Assign to technician · Status: Assigned</div></div>
+      <span class="role-arrow">›</span>
+    </div>
+    <div class="role-card role-tech-card" onclick="enterRole('tech')">
+      <span class="role-icon">👷</span>
+      <div><div class="role-name">Technician</div>
+        <div class="role-desc">Complete job · Spare parts · Status: Completed</div></div>
+      <span class="role-arrow">›</span>
+    </div>
+  </div>
+  <div class="login-footer">100% Free · No app store · Works on any phone, PC or tablet<br>Bookmark this file and share with your team</div>
+</div>
+
+<!-- ══════ TECHNICIAN ══════ -->
+<div class="screen" id="screen-tech">
+  <div class="topbar">
+    <div class="tb-left"><span class="tb-title">BSC Service Report</span>
+      <span class="tb-sub" id="tb-role-label">Bukamal · RDMS/FM/04</span></div>
+    <div class="tb-right">
+      <button class="tb-btn" onclick="openHistory('tech')">📂 History</button>
+      
+      <button class="tb-btn" onclick="openSettings()">⚙️</button>
+      <button class="tb-btn" onclick="goLogin()">← Exit</button>
+    </div>
+  </div>
+  <div id="edit-banner-tech" style="display:none;background:#FFF3E0;border-bottom:2px solid #FF9800;padding:8px 14px;font-size:12px;font-weight:600;color:#E65100;align-items:center;justify-content:space-between;gap:8px">
+    <span>✏️ Editing: "<span id="edit-banner-tech-name"></span>" — re-save to update sheet row.</span>
+    <button onclick="tLoadedKey=null;document.getElementById('edit-banner-tech').style.display='none';toast('Edit mode cleared')" style="background:none;border:1px solid #FF9800;border-radius:5px;padding:3px 8px;font-size:11px;color:#E65100;cursor:pointer;font-family:Inter,sans-serif">✕ Cancel</button>
+  </div>
+  <!-- Workflow status bar -->
+  <div id="workflow-bar" style="display:none;background:#F0F4FF;border-bottom:2px solid #1565C0;padding:10px 14px;font-size:12px">
+    <div style="font-weight:700;color:#0C3B6E;margin-bottom:6px">📋 Workflow Status</div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <span id="wf-step1" style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#BDBDBD;color:#fff">1 · Sales Team</span>
+      <span style="color:#BDBDBD">→</span>
+      <span id="wf-step2" style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#BDBDBD;color:#fff">2 · Coordinator</span>
+      <span style="color:#BDBDBD">→</span>
+      <span id="wf-step3" style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#BDBDBD;color:#fff">3 · Technician</span>
+    </div>
+    <div id="wf-role-label" style="margin-top:6px;font-size:11px;color:#555"></div>
+  </div>
+  <div id="edit-banner-tech" style="display:none;background:#FFF3E0;border-bottom:2px solid #FF9800;padding:8px 14px;font-size:12px;font-weight:600;color:#E65100;align-items:center;justify-content:space-between;gap:8px">
+    <span>✏️ Editing: "<span id="edit-banner-tech-name"></span>" — re-save to update.</span>
+    <button onclick="tLoadedKey=null;document.getElementById('edit-banner-tech').style.display='none';toast('Edit mode cleared')" style="background:none;border:1px solid #FF9800;border-radius:5px;padding:3px 8px;font-size:11px;color:#E65100;cursor:pointer;font-family:Inter,sans-serif">✕</button>
+  </div>
+  <input type="hidden" id="t-si-hidden" value="">
+  <div class="wrap">
+
+  <div class="card" data-card="technician-card">
+    <div class="card-head"><span class="icon">👷</span><h2>Technician</h2></div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label>Complaint No.</label><input type="text" id="t-complaint-no" placeholder="Auto-generating…" readonly style="background:#F0F4FF;font-weight:700;color:#1565C0;cursor:default"></div>
+        <div class="field">
+          <label>Dept <span class="req">*</span></label>
+          <select id="t-dept">
+            <option value="">— select —</option>
+            <option>CIS</option><option>BCP</option><option>TOTO</option>
+            <option>SECOM</option><option>BUK-PROP</option><option>BUK-MANAGEMENT</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field" id="assigned-to-field" style="display:none">
+          <label>Assigned To <span class="req">*</span></label>
+          <select id="t-assigned-to">
+            <option value="">— select technician —</option>
+            <option>Ajeeth</option><option>Hassan</option><option>Vishal</option>
+            <option>Ajeet Kumar</option><option>Hasan</option>
+            <option>Prem / Vishal</option><option>Vishal / Ajeeth</option><option>Vishal / Hasan</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Complaint Date Received</label><input type="date" id="t-date"></div>
+        <div class="field"><label>Received Time</label><input type="time" id="t-date-time"></div>
+      </div>
+
+      <div class="field" id="tech-select-field">
+        <label>Technician <span class="req">*</span></label>
+        <select id="t-tech">
+          <option value="">— select —</option>
+          <option>Ajeeth</option><option>Hassan</option><option>Vishal</option>
+          <option>Ajeet Kumar</option><option>Hasan</option>
+          <option>Prem / Vishal</option><option>Vishal / Ajeeth</option><option>Vishal / Hasan</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Submitted By <span class="req">*</span></label>
+          <input type="text" id="t-se" placeholder="Enter name…">
+        </div>
+        <div class="field">
+          <label>Complaint Details</label>
+          <input type="text" id="t-month" placeholder="Enter complaint details…">
+        </div>
+      </div>
+      <div class="field">
+        <label>Area <span class="req">*</span></label>
+        <input type="text" id="t-area" list="t-area-list" placeholder="Select area…" oninput="tHandleOther(this,'t-area-list')">
+        <datalist id="t-area-list"><option>Aali</option><option>Adliya</option><option>Amwaj</option><option>Arad</option><option>Askar</option><option>At Shop</option><option>Awali</option><option>Bani Jamra</option><option>Barbar</option><option>Budaiya</option><option>Burhuma</option><option>Busaiteen</option><option>Dair</option><option>Damistan</option><option>Diraz</option><option>Duraz</option><option>East Riffa</option><option>Galali</option><option>Gudaibiya</option><option>Hamad Town</option><option>Hamala</option><option>Hidd</option><option>Hoora</option><option>Isa Town</option><option>Janabiya</option><option>Jaw</option><option>Jerdab</option><option>Jid Al Haj</option><option>Jidali</option><option>Juffair</option><option>Karzakan</option><option>Lawzi</option><option>Maameer</option><option>Manama</option><option>Maqabah</option><option>Muharraq</option><option>Nabih Saleh</option><option>Naim</option><option>Nuwaidrat</option><option>Qalali</option><option>Ramli</option><option>Riffa</option><option>Saar</option><option>Salmabad</option><option>Salman City</option><option>Sanad</option><option>Sanabis</option><option>Seef</option><option>Shakhura</option><option>Sitra</option><option>Tashan</option><option>Tubli</option><option>Wadi Al Sail</option><option>Zallaq</option><option>Zinj</option><option>OTHER</option></datalist>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-card="client-card">
+    <div class="card-head"><span class="icon">🏠</span><h2>Client &amp; Location</h2></div>
+    <div class="card-body">
+      <div class="field">
+        <label>Dealer / Client / Contractor <span class="req">*</span></label>
+        <input type="text" id="t-dealer" list="t-dealer-list" placeholder="Type client name…" oninput="tHandleOther(this,'t-dealer-list')">
+        <datalist id="t-dealer-list"><option>ABBAD LIGHTS</option><option>ABLASH TRADING</option><option>AL BADI BUILDING MATERIALS</option><option>AL ENTIFADHA ARAD</option><option>AL ENTIFADHA MUHARRAQ</option><option>AL GASSAB BUILDING MATERIALS</option><option>AL HABIB BUILDING MATERIALS</option><option>AL KARRAR TRADING</option><option>AL KHULOOD</option><option>AL MAJD TRADING MANAMA</option><option>Alif Trading</option><option>Alif Jerdab</option><option>Alif Tubli</option><option>Alif Budaiya</option><option>Anwar Al Khamis</option><option>Arab United Steel</option><option>Asrar Al Sanad</option><option>Aswar Al Madina</option><option>Aviva - 1</option><option>Aviva - 2</option><option>Aviva - 3</option><option>Aviva - 4</option><option>Aviva - 5</option><option>Aviva - 6</option><option>Aviva - 7</option><option>Azfar Property</option><option>BENGAL STAR JIDALI</option><option>Black Rose</option><option>Budaiya Building Materials</option><option>Bukamal Properties</option><option>Cash</option><option>CIVIL TECHNICAL TRADING</option><option>Dar Al Marmmar</option><option>DOHAT ARAD BUILDING MATERIALS</option><option>E&F Trading</option><option>Eight Colors</option><option>FAIZAN BUILDING MATERIALS</option><option>Fair Trading</option><option>Future Power Trading</option><option>Galali Building Materials</option><option>Hertz Electrical</option><option>Kashfi Enterprises</option><option>Mahmood Jameel</option><option>Malikan Trading</option><option>Micron Trading</option><option>Ministry Of Housing</option><option>Packman Building Materials</option><option>Poweron Trading</option><option>Qalali Building Materials</option><option>Sayed Saleh</option><option>Sufeen Trading</option><option>Three Colors</option><option>Vigorous Power Trading</option><option>Wahat Raz Ruman Construction</option><option>Yousif Al Qallaf</option><option>Zaedon Building Materials</option><option>Direct</option><option>OTHER</option></datalist>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Contact 1 <span class="req">*</span></label><input type="tel" id="t-contact1" placeholder="e.g. 39123456" inputmode="numeric"></div>
+        <div class="field"><label>Contact 2</label><input type="tel" id="t-contact2" placeholder="optional"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label>House <span class="req">*</span></label><input type="text" id="t-house" placeholder="No."></div>
+        <div class="field"><label>Road <span class="req">*</span></label><input type="text" id="t-road" placeholder="No."></div>
+        <div class="field"><label>Block <span class="req">*</span></label><input type="text" id="t-block" placeholder="No."></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-card="product-card">
+    <div class="card-head"><span class="icon">🔧</span><h2>Product</h2></div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field">
+          <label>Product Code</label>
+          <input type="text" id="t-pcode" list="t-pcode-list" placeholder="Code…" oninput="tSmartFill()" autocomplete="off">
+          <datalist id="t-pcode-list">
+            <option value="ELWH001">W.HEATER 50 LTR AQUA HOT VERTICAL</option>
+            <option value="ELWH002">W.HEATER 80 LTR AQUA HOT VERTICAL</option>
+            <option value="ELWH003">W.HEATER 100 LTR AQUA HOT VERTICAL</option>
+            <option value="ELWH005">W.HEATER 50 LTR SUPER AQUA HOT VERTICAL</option>
+            <option value="ELWH006">W.HEATER 80 LTR SUPER AQUA HOT VERTICAL</option>
+            <option value="ELWH007">W.HEATER 100 LTR SUPER AQUA HOT VERTICAL</option>
+            <option value="ELWH008">W.HEATER 80 LTR AQUA HOT HORIZONTAL</option>
+            <option value="ELWH010">W.HEATER 50 LTR AQUA HOT HORIZONTAL</option>
+            <option value="ELWH011">W.HEATER 80 LTR SUPER AQUA HOT HORIZONTAL</option>
+            <option value="ELWH012">W.HEATER 50 LTR SUPER AQUA HOT HORIZONTAL</option>
+            <option value="ELWH013">W.HEATER 100 LTR AQUA HOT HORIZONTAL</option>
+            <option value="ELWH015">W.HEATER 100 LTR SUPER AQUA HOT HORIZONTAL</option>
+            <option value="ELWH033">DANA E.HOT W.HEATER 80L VERTICAL</option>
+            <option value="ELWH034">DANA E.HOT W.HEATER 50L VERTICAL</option>
+            <option value="ELWH035">DANA E.HOT W.HEATER 100L VERTICAL</option>
+            <option value="ELWH049">50 LTR WATER HEATER SOLO -7YRS WARRANTY (VERTICAL)</option>
+            <option value="ELWH050">80 LTR WATER HEATER SOLO -7YRS WARRANTY (VERTICAL)</option>
+            <option value="ELWH051">80 LTR WATER HEATER SOLO-7YRS WARRANTY (HORIZONTAL) W/O HOSE</option>
+            <option value="ELWH052">50 LTR WATER HEATER SOLO-7YRS WARRANTY (HORIZONTAL) W/O HOSE</option>
+            <option value="ELWH056">100 LTR WATER HEATER SOLO-7YRS WARRANTY (VERTICAL)</option>
+            <option value="MAWP001">EURO DESIGN FLOAT SWITCH WITH 2 MTR WIRE</option>
+            <option value="MAWP002">EURO DESIGN FLOAT SWITCH WITH 3 MTR WIRE</option>
+            <option value="MAWP003">EURO DESIGN FLOAT SWITCH WITH 5 MTR WIRE</option>
+            <option value="MAWP008">PEDROLLO EL.W.PUMP PKM60 1/2HP</option>
+            <option value="MAWP009">PEDROLLO EL.W.PUMP PKM65 3/4HP</option>
+            <option value="MAWP010">PEDROLLO EL.W.PUMP CPM158 1HP</option>
+            <option value="MAWP011">EASY PRESS 1 1HP (0.8 PRESSURE BAR</option>
+            <option value="MAWP061">PLURIJET M 3/100--N,1PH,0.75HP,V240/50HZ.</option>
+            <option value="MAWP062">PLURIJET M 4/100-N,1PH,1 HP,V240/50HZ.</option>
+            <option value="MAWP066">SS PUMP RXM3,0.75HP,1PH,V.240/50HZ</option>
+            <option value="MAWP076">CENTRIFUGAL PUMP CPM 170,1.5HP,1PH,V.240 44CI175B1</option>
+            <option value="MAWP077">CENTRIFUGAL PUMP HFM 5AM,2HP,1PH,V240 47HF5M2A7B1</option>
+            <option value="MAWP078">SUBMERSIBLE PUMP TOP1.0.30HP,1PH,V.240 48TOP11B1</option>
+            <option value="MAWP079">SUBMERSIBLE PUMP TOP 2.0.50HP,1PH,V.240 48TOP12B1</option>
+            <option value="MAWP080">PEDROLLO FLOAT SWITCHES 0315/3 50014</option>
+            <option value="MAWP081">PEDROLLO FLOAT SWITCHES 0315/5 500145</option>
+            <option value="MAWP125">EASYSMALL-2M 0.8BAR 16A WITH MANOMETER</option>
+            <option value="MAWP126">EURO DESIGN EL.W.PUMP EDP 370 1/2 HP</option>
+            <option value="MAWP127">EURO DESIGN EL.W.PUMP EDP 750 1 HP</option>
+            <option value="MAWP128">EURO DESIGN PRESSURE CONTROL SWITCH</option>
+            <option value="MAWP129">MHI 4-40 MULTI STAGE TRANSFER PUMP</option>
+            <option value="MAWP130">MHI 4-40 MULTI STAGE BOOSTER SET</option>
+            <option value="MAWP131">EURO DESIGN STAINLESS STEEL JET PUMP EDJP750 1HP</option>
+            <option value="MAWP132">VMJS-100CC - 0.75KW/1HP HORIZONTAL SELF PRIMING CENTR PUMP</option>
+            <option value="MAWP214">PEDROLLO PUMP CPM 158 ST6 1HP</option>
+            <option value="MAWP215">PLURIJETM 3/130 1.5HP 240V 50HZ PUMP</option>
+            <option value="MAWP216">PLURIJETM 4/200 1.5HP 240V 50HZ PUMP</option>
+            <option value="MAWP217">PEDROLLO EL.W.PUMP PQAM60 240V 50HZ</option>
+            <option value="MAWP218">PEDROLLO EL W. PUMP HF/5A V.240-415/50 HZ</option>
+            <option value="MAWP219">PEDROLLO EL W. PUMP HF 5B 240/415V 50Hz</option>
+            <option value="MAWP220">PEDROLLO EL.W.PUMP FUTURE JETm 1A-ST</option>
+            <option value="MAWP222">ELECTRIC WATER PUMP VX 20/50-ST 415V 50Hz 10m</option>
+            <option value="OTHER">OTHER — Enter manually</option>
+          </datalist>
+        </div>
+        <div class="field"><label>Qty.</label><input type="number" id="t-qty" value="1" min="1"></div>
+      </div>
+      <div class="field"><label>Product Description</label><input type="text" id="t-pdesc" placeholder="Auto-filled or type…"></div>
+      <div class="field"><label>Serial No.</label><input type="text" id="t-serial" placeholder="Full serial number" oninput="tMfgFromSerial()"></div>
+      <div class="row2">
+        <div class="field"><label>MFG Year <span class="req" id="t-mfg-req" style="display:none">*</span></label><input type="text" id="t-mfg" placeholder="e.g. 2024"></div>
+        <div class="field"><label>Purchase / Batch Date</label><input type="date" id="t-dop"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-card="complaint-work-card">
+    <div class="card-head"><span class="icon">📋</span><h2>Complaint &amp; Work Done</h2></div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label>Attended On</label><input type="date" id="t-attended"></div>
+        <div class="field"><label>Attended Time</label><input type="time" id="t-attended-time"></div>
+      </div>
+      <div class="field">
+        <label>Nature of Complaint</label>
+        <select id="t-nature" onchange="tToggleNatureOther()">
+          <option value="">— select —</option>
+          <option>Leaking</option><option>Not Heating</option><option>Power Tripping</option>
+          <option>Short Circuit</option><option>Noise</option><option>Not Working</option>
+          <option>BSV Noise</option><option>Dirty Water</option><option>Rusty Water</option>
+          <option>Broken</option><option>Low Pressure</option><option>Over Heating</option>
+          <option>Sound Issue</option><option>Water heater not heating</option>
+          <option>Water heater leaking</option><option>Pump not working</option>
+          <option>Burnt</option><option>Others</option>
+        </select>
+      </div>
+      <div id="t-nature-other-wrap" style="display:none">
+        <div class="field"><label>Describe Complaint</label>
+          <input type="text" id="t-nature-other" placeholder="Describe the complaint…"></div>
+      </div>
+      <div class="field"><label>Remark — Findings &amp; Work Done</label>
+        <textarea id="t-remark" placeholder="Describe what was found and what work was done…"></textarea></div>
+      <div class="field">
+        <label>Status</label>
+        <div class="status-grid">
+          <button class="st" onclick="tSetStatus('Repair','on-repair',this)"><span class="icon">✅</span>Repair</button>
+          <button class="st" onclick="tSetStatus('Replacement','on-replace',this)"><span class="icon">🔄</span>Replacement</button>
+          <button class="st" onclick="tSetStatus('Warranty void','on-void',this)"><span class="icon">❌</span>Warranty Void</button>
+          <button class="st" onclick="tSetStatus('No problem in heater','on-noproblem',this)"><span class="icon">👍</span>No Problem</button>
+        </div>
+        <input type="text" id="t-status-custom" placeholder="Or type custom status…" style="margin-top:8px">
+      </div>
+      <div class="field">
+        <label>Replaced Unit <span class="req" id="t-replaced-req" style="display:none">*</span></label>
+        <input type="text" id="t-replaced" placeholder="e.g. Water Heater × 1, Others × 2…">
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-card="spare-parts-card">
+    <div class="card-head"><span class="icon">🛠️</span><h2>Spare Parts Used</h2></div>
+    <div class="card-body">
+      <div class="parts-wrap">
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Element')" data-k="Element">Element</div><input class="part-qty" id="q-Element" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Thermostat')" data-k="Thermostat">Thermostat</div><input class="part-qty" id="q-Thermostat" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-BSV')" data-k="BSV">Bottom Safety Valve (BSV)</div><input class="part-qty" id="q-BSV" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-TSV')" data-k="TSV">Top Safety Valve (TSV)</div><input class="part-qty" id="q-TSV" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-ORing')" data-k="ORing">O Ring</div><input class="part-qty" id="q-ORing" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Impellor')" data-k="Impellor">Impellor</div><input class="part-qty" id="q-Impellor" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Bearing')" data-k="Bearing">Bearing</div><input class="part-qty" id="q-Bearing" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-MechSeal')" data-k="MechSeal">Mechanical Seal</div><input class="part-qty" id="q-MechSeal" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Capacitor')" data-k="Capacitor">Capacitor</div><input class="part-qty" id="q-Capacitor" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-LampIndicator')" data-k="LampIndicator">Lamp Indicator</div><input class="part-qty" id="q-LampIndicator" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-FrontBody')" data-k="FrontBody">Front Body</div><input class="part-qty" id="q-FrontBody" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-ImpellorBackBody')" data-k="ImpellorBackBody">Impellor Back Body</div><input class="part-qty" id="q-ImpellorBackBody" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-FrontCover')" data-k="FrontCover">Front Cover</div><input class="part-qty" id="q-FrontCover" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Terminal')" data-k="Terminal">Terminal</div><input class="part-qty" id="q-Terminal" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-WindingBase')" data-k="WindingBase">Winding Base</div><input class="part-qty" id="q-WindingBase" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-WireLegs')" data-k="WireLegs">Wire &amp; Legs</div><input class="part-qty" id="q-WireLegs" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Shaft')" data-k="Shaft">Shaft</div><input class="part-qty" id="q-Shaft" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-PowerConnector')" data-k="PowerConnector">Power Connector</div><input class="part-qty" id="q-PowerConnector" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-CoverPlate')" data-k="CoverPlate">Cover Plate</div><input class="part-qty" id="q-CoverPlate" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Fan')" data-k="Fan">Fan</div><input class="part-qty" id="q-Fan" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-FlexibleHose')" data-k="FlexibleHose">Flexible Hose</div><input class="part-qty" id="q-FlexibleHose" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Filter')" data-k="Filter">Filter</div><input class="part-qty" id="q-Filter" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Motor')" data-k="Motor">Motor</div><input class="part-qty" id="q-Motor" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Stator')" data-k="Stator">Stator</div><input class="part-qty" id="q-Stator" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Anod')" data-k="Anod">Anod</div><input class="part-qty" id="q-Anod" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-RubberGasket')" data-k="RubberGasket">Rubber Gasket</div><input class="part-qty" id="q-RubberGasket" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-BottomLidCover')" data-k="BottomLidCover">Bottom Lid Cover</div><input class="part-qty" id="q-BottomLidCover" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-FanCover')" data-k="FanCover">Fan Cover</div><input class="part-qty" id="q-FanCover" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-TopCover')" data-k="TopCover">Top Cover</div><input class="part-qty" id="q-TopCover" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-FrontCasing')" data-k="FrontCasing">Front Casing</div><input class="part-qty" id="q-FrontCasing" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-ThermoGauge')" data-k="ThermoGauge">Thermo metre Gauge</div><input class="part-qty" id="q-ThermoGauge" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Hook')" data-k="Hook">Hook</div><input class="part-qty" id="q-Hook" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-TeflonWasher')" data-k="TeflonWasher">Teflon Washer</div><input class="part-qty" id="q-TeflonWasher" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Flange')" data-k="Flange">Flange</div><input class="part-qty" id="q-Flange" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-BladeBrush')" data-k="BladeBrush">Blade/Brush</div><input class="part-qty" id="q-BladeBrush" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Knob')" data-k="Knob">Knob</div><input class="part-qty" id="q-Knob" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Bowl')" data-k="Bowl">Bowl</div><input class="part-qty" id="q-Bowl" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Gasket')" data-k="Gasket">Gasket</div><input class="part-qty" id="q-Gasket" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Socket')" data-k="Socket">Socket</div><input class="part-qty" id="q-Socket" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-Bolt')" data-k="Bolt">Bolt</div><input class="part-qty" id="q-Bolt" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tp(this,'q-WallGasket')" data-k="WallGasket">Wall Support Gasket</div><input class="part-qty" id="q-WallGasket" type="number" min="1" placeholder="Qty"></div>
+        <div class="part-row"><div class="part" onclick="tpOthers(this)" data-k="Others" id="part-others">Others</div></div>
+      </div>
+      <div id="others-remark-wrap" style="display:none;margin-top:8px">
+        <div class="field" style="margin-bottom:0"><label>Others — describe <span class="req">*</span></label>
+          <textarea id="t-others-remark" placeholder="Specify the other spare part(s) used…" style="min-height:60px"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /wrap -->
+
+  <div class="abar">
+    <!-- Sales Team buttons -->
+    <div class="abar-row" id="abar-sales" style="display:none">
+      <button class="btn-save btn-navy" onclick="wfSave('sales')" style="background:#2E7D32">📞 Submit Complaint</button>
+      <button class="btn-save btn-blue" onclick="tSaveReport()">💾 Save PDF</button>
+    </div>
+    <!-- Coordinator buttons -->
+    <div class="abar-row" id="abar-coord" style="display:none">
+      <button class="btn-save btn-navy" onclick="wfSave('coord')" style="background:#7B1FA2">🗂️ Assign to Technician</button>
+      <button class="btn-save btn-blue" onclick="tSaveReport()">💾 Save PDF</button>
+    </div>
+    <!-- Technician buttons -->
+    <div class="abar-row" id="abar-tech" style="display:none">
+      <button class="btn-save btn-navy" onclick="wfSave('tech')">✅ Mark Completed</button>
+      <button class="btn-save btn-blue" onclick="tSaveReport()">💾 Save PDF</button>
+    </div>
+    <div class="abar-row">
+    <div class="abar-row">
+      <button class="btn-wa" onclick="tOpenWA()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        WhatsApp
+      </button>
+      <button class="btn-new" onclick="tNewReport()">✚ New</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SALES ══════ -->
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settings-modal">
+  <div class="modal">
+    <h3>⚙️ Google Sheets Settings</h3>
+    <p style="font-size:12px;color:var(--t2);margin-bottom:14px">Both Technician and Sales reports sync to the same Apps Script URL. They are saved on separate sheet tabs: <strong>Reports</strong> and <strong>Reports</strong>.</p>
+    <div class="field">
+      <label>Google Apps Script Web App URL</label>
+      <input type="text" id="settings-gs-url" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:16px">
+    </div>
+    <div style="background:#E8F5E9;border-radius:8px;padding:10px 12px;font-size:11px;color:#2E7D32;margin-top:8px">
+      ✅ Your Apps Script must read the <strong>sheetTab</strong> field to route data to the correct sheet. The tab name is sent automatically with every report.
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label>Google Sheet Direct URL (for History links)</label>
+      <input type="text" id="settings-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" style="font-size:16px">
+      <div style="font-size:11px;color:var(--t3);margin-top:4px">Paste your Google Sheet URL — each history card will show a link filtered by client name (Column C).</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-confirm" onclick="saveSettings()">Save URL</button>
+      <button class="btn-cancel" onclick="closeModal('settings-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<!-- SEARCH MODAL -->
+<div class="modal-bg" id="search-modal">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column">
+    <h3 style="margin-bottom:8px">🔍 Search Reports</h3>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input type="text" id="search-input" placeholder="Complaint No, client name or contact…"
+        style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Inter,sans-serif;outline:none"
+        oninput="runSearch(this.value)">
+      <button onclick="runSearch(document.getElementById('search-input').value)"
+        style="padding:9px 14px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif">Go</button>
+    </div>
+    <div id="search-results" style="flex:1;overflow-y:auto;max-height:55vh">
+      <p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">Type a client name or contact number to search.</p>
+    </div>
+    <div class="modal-btns" style="margin-top:10px">
+      <button class="btn-cancel" onclick="closeModal('search-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="history-modal">
+  <div class="modal">
+    <h3 id="history-title">📂 Report History</h3>
+    <input type="text" id="history-search-input" placeholder="🔍 Search complaint no, client, contact…"
+      style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:Inter,sans-serif;outline:none;margin-bottom:10px;box-sizing:border-box"
+      oninput="filterHistory(this.value)">
+    <div id="history-list" style="max-height:55vh;overflow-y:auto"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('history-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+/* ══════════════════════════════════════════════════════════════════════
+   BROWSER COMPATIBILITY LAYER — Android / iOS / Windows
+   Added wrapper only. No application logic below this block was changed.
+
+   Why it exists: iOS Safari THROWS a SecurityError on any localStorage
+   access when the page runs from file://, in Private Browsing, or with
+   Settings > Safari > "Block All Cookies" on. The settings IIFE below
+   touches localStorage at top level, so that throw aborted the whole
+   script. Function declarations still hoisted (so taps registered), but
+   every let/const after the throw stayed in the Temporal Dead Zone —
+   so enterRole()'s first line threw ReferenceError and nothing happened.
+   ══════════════════════════════════════════════════════════════════════ */
+var BSC_MEM = {};
+var BSC_STORAGE_OK = false;
+try {
+  window.localStorage.setItem('__bsc_probe__', '1');
+  window.localStorage.removeItem('__bsc_probe__');
+  BSC_STORAGE_OK = true;
+} catch (e) {
+  BSC_STORAGE_OK = false;
+}
+
+var LS = {
+  getItem: function (k) {
+    if (BSC_STORAGE_OK) {
+      try { var v = window.localStorage.getItem(k); if (v !== null) return v; }
+      catch (e) { BSC_STORAGE_OK = false; }
+    }
+    return Object.prototype.hasOwnProperty.call(BSC_MEM, k) ? BSC_MEM[k] : null;
+  },
+  setItem: function (k, v) {
+    v = String(v);
+    BSC_MEM[k] = v;
+    if (BSC_STORAGE_OK) {
+      try { window.localStorage.setItem(k, v); }
+      catch (e) { BSC_STORAGE_OK = false; }
+    }
+  },
+  removeItem: function (k) {
+    delete BSC_MEM[k];
+    if (BSC_STORAGE_OK) { try { window.localStorage.removeItem(k); } catch (e) {} }
+  },
+  keys: function () {
+    var out = Object.keys(BSC_MEM);
+    if (BSC_STORAGE_OK) {
+      try {
+        Object.keys(window.localStorage).forEach(function (k) {
+          if (out.indexOf(k) === -1) out.push(k);
+        });
+      } catch (e) { BSC_STORAGE_OK = false; }
+    }
+    return out;
+  }
+};
+
+/* iPhones and Android phones have no visible console. Surface errors
+   on screen so a failure is never silent again. */
+(function () {
+  function show(msg) {
+    try {
+      var t = document.getElementById('toast');
+      if (t) { t.textContent = '⚠️ ' + msg; t.classList.add('show');
+               clearTimeout(t._t); t._t = setTimeout(function () { t.classList.remove('show'); }, 6000); }
+    } catch (e) {}
+  }
+  window.addEventListener('error', function (ev) {
+    show((ev.message || 'Script error') + (ev.lineno ? ' (line ' + ev.lineno + ')' : ''));
+  });
+  window.addEventListener('unhandledrejection', function (ev) {
+    var r = ev.reason;
+    show((r && r.message) ? r.message : 'Background task failed');
+  });
+})();
+
+function bscStorageNotice() {
+  if (BSC_STORAGE_OK || window.__bscStorageWarned) return;
+  window.__bscStorageWarned = true;
+  setTimeout(function () {
+    try { toast('ℹ️ Private Browsing / storage blocked — saving to Google Sheets still works, but local drafts and history won\'t survive a reload.'); } catch (e) {}
+  }, 900);
+}
+
+function bscLibReady(kind) {
+  if (kind === 'pdf') {
+    if (window.jspdf && window.jspdf.jsPDF) return true;
+    try { toast('⚠️ PDF library not loaded — check your connection and reload.'); } catch (e) {}
+    return false;
+  }
+  if (typeof XLSX !== 'undefined' && XLSX && XLSX.utils) return true;
+  try { toast('⚠️ Excel library not loaded — check your connection and reload.'); } catch (e) {}
+  return false;
+}
+
+/* iOS Safari sometimes refuses the <a download> path jsPDF uses.
+   Fall back to opening the PDF in the built-in viewer. */
+function bscSavePdf(doc, filename) {
+  try { doc.save(filename); }
+  catch (e) {
+    try {
+      var url = doc.output('bloburl');
+      var w = window.open(url, '_blank');
+      if (!w) window.location.href = url;
+    } catch (e2) { try { toast('⚠️ Could not generate PDF: ' + e2.message); } catch (e3) {} }
+  }
+}
+/* ═════════════ end compatibility layer — app code follows unchanged ═════════════ */
+
+// ══ PRODUCTS & LOOKUP ══
+var PRODUCTS = {
+  'ELWH001':'W.HEATER 50 LTR AQUA HOT VERTICAL',
+  'ELWH002':'W.HEATER 80 LTR AQUA HOT VERTICAL',
+  'ELWH003':'W.HEATER 100 LTR AQUA HOT VERTICAL',
+  'ELWH005':'W.HEATER 50 LTR SUPER AQUA HOT VERTICAL',
+  'ELWH006':'W.HEATER 80 LTR SUPER AQUA HOT VERTICAL',
+  'ELWH007':'W.HEATER 100 LTR SUPER AQUA HOT VERTICAL',
+  'ELWH008':'W.HEATER 80 LTR AQUA HOT HORIZONTAL',
+  'ELWH010':'W.HEATER 50 LTR AQUA HOT HORIZONTAL',
+  'ELWH011':'W.HEATER 80 LTR SUPER AQUA HOT HORIZONTAL',
+  'ELWH012':'W.HEATER 50 LTR SUPER AQUA HOT HORIZONTAL',
+  'ELWH013':'W.HEATER 100 LTR AQUA HOT HORIZONTAL',
+  'ELWH015':'W.HEATER 100 LTR SUPER AQUA HOT HORIZONTAL',
+  'ELWH033':'DANA E.HOT W.HEATER 80L VERTICAL',
+  'ELWH034':'DANA E.HOT W.HEATER 50L VERTICAL',
+  'ELWH035':'DANA E.HOT W.HEATER 100L VERTICAL',
+  'ELWH049':'50 LTR WATER HEATER SOLO -7YRS WARRANTY (VERTICAL)',
+  'ELWH050':'80 LTR WATER HEATER SOLO -7YRS WARRANTY (VERTICAL)',
+  'ELWH051':'80 LTR WATER HEATER SOLO-7YRS WARRANTY (HORIZONTAL) W/O HOSE',
+  'ELWH052':'50 LTR WATER HEATER SOLO-7YRS WARRANTY (HORIZONTAL) W/O HOSE',
+  'ELWH056':'100 LTR WATER HEATER SOLO-7YRS WARRANTY (VERTICAL)',
+  'MAWP001':'EURO DESIGN FLOAT SWITCH WITH 2 MTR WIRE',
+  'MAWP002':'EURO DESIGN FLOAT SWITCH WITH 3 MTR WIRE',
+  'MAWP003':'EURO DESIGN FLOAT SWITCH WITH 5 MTR WIRE',
+  'MAWP008':'PEDROLLO EL.W.PUMP PKM60 1/2HP',
+  'MAWP009':'PEDROLLO EL.W.PUMP PKM65 3/4HP',
+  'MAWP010':'PEDROLLO EL.W.PUMP CPM158 1HP',
+  'MAWP011':'EASY PRESS 1 1HP (0.8 PRESSURE BAR',
+  'MAWP061':'PLURIJET M 3/100--N,1PH,0.75HP,V240/50HZ.',
+  'MAWP062':'PLURIJET M 4/100-N,1PH,1 HP,V240/50HZ.',
+  'MAWP066':'SS PUMP RXM3,0.75HP,1PH,V.240/50HZ',
+  'MAWP076':'CENTRIFUGAL PUMP CPM 170,1.5HP,1PH,V.240 44CI175B1',
+  'MAWP077':'CENTRIFUGAL PUMP HFM 5AM,2HP,1PH,V240 47HF5M2A7B1',
+  'MAWP078':'SUBMERSIBLE PUMP TOP1.0.30HP,1PH,V.240 48TOP11B1',
+  'MAWP079':'SUBMERSIBLE PUMP TOP 2.0.50HP,1PH,V.240 48TOP12B1',
+  'MAWP080':'PEDROLLO FLOAT SWITCHES 0315/3 50014',
+  'MAWP081':'PEDROLLO FLOAT SWITCHES 0315/5 500145',
+  'MAWP125':'EASYSMALL-2M 0.8BAR 16A WITH MANOMETER',
+  'MAWP126':'EURO DESIGN EL.W.PUMP EDP 370 1/2 HP',
+  'MAWP127':'EURO DESIGN EL.W.PUMP EDP 750 1 HP',
+  'MAWP128':'EURO DESIGN PRESSURE CONTROL SWITCH',
+  'MAWP129':'MHI 4-40 MULTI STAGE TRANSFER PUMP',
+  'MAWP130':'MHI 4-40 MULTI STAGE BOOSTER SET',
+  'MAWP131':'EURO DESIGN STAINLESS STEEL JET PUMP EDJP750 1HP',
+  'MAWP132':'VMJS-100CC - 0.75KW/1HP HORIZONTAL SELF PRIMING CENTR PUMP',
+  'MAWP214':'PEDROLLO PUMP CPM 158 ST6 1HP',
+  'MAWP215':'PLURIJETM 3/130 1.5HP 240V 50HZ PUMP',
+  'MAWP216':'PLURIJETM 4/200 1.5HP 240V 50HZ PUMP',
+  'MAWP217':'PEDROLLO EL.W.PUMP PQAM60 240V 50HZ',
+  'MAWP218':'PEDROLLO EL W. PUMP HF/5A V.240-415/50 HZ',
+  'MAWP219':'PEDROLLO EL W. PUMP HF 5B 240/415V 50Hz',
+  'MAWP220':'PEDROLLO EL.W.PUMP FUTURE JETm 1A-ST',
+  'MAWP222':'ELECTRIC WATER PUMP VX 20/50-ST 415V 50Hz 10m',
+  'OTHER':'',
+};
+var DESC_TO_CODE = {};
+Object.entries(PRODUCTS).forEach(([k,v])=>{ DESC_TO_CODE[v.toLowerCase()]=k; });
+
+// ══ FORCE URL UPDATE ══
+(function(){
+  try{
+  const forced='https://script.google.com/macros/s/AKfycbyUfWTvPXVdvA-t9d7v1CRv9HzXyU2G1NsGCOlDlu4bUh_N3L8CnTmHErXUMv7Y6DF5/exec';
+  const saved=LS.getItem('bsc_gs_url');
+  // Always overwrite if saved URL is different from the current hardcoded one
+  if(saved !== forced) LS.setItem('bsc_gs_url', forced);
+  }catch(e){ /* never abort the script */ }
+})();
+
+// ══ SHARED STATE ══
+var tLoadedKey = null;
+var sLoadedKey = null;
+var tSelStatus = '';
+var historyRole = '';
+
+// ══ SHARED UTILITIES ══
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function tv(id){ const el=document.getElementById(id); return el?(el.value||'').trim():''; }
+function v(id){ return tv(id); }
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3800);
+}
+function getGsUrl(){
+  return LS.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbyUfWTvPXVdvA-t9d7v1CRv9HzXyU2G1NsGCOlDlu4bUh_N3L8CnTmHErXUMv7Y6DF5/exec';
+}
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function fmtTime12(t){
+  // Convert HH:MM (24h) to hh:MM AM/PM
+  if(!t) return '';
+  const [hh,mm] = t.split(':').map(Number);
+  const ampm = hh < 12 ? 'AM' : 'PM';
+  const h12 = hh % 12 || 12;
+  return h12+':'+(mm<10?'0':'')+mm+' '+ampm;
+}
+function isHeaterCode(code){
+  return typeof code === 'string' && code.toUpperCase().startsWith('ELWH');
+}
+
+// ══ NAVIGATION ══
+function enterApp(role){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+role).classList.add('active');
+  if(role==='tech') initTech(); else initSales();
+  window.scrollTo(0,0);
+}
+function goLogin(){
+  if(!confirm('Return to role selection?')) return;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-login').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══ SETTINGS ══
+function openSettings(){
+  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbyUfWTvPXVdvA-t9d7v1CRv9HzXyU2G1NsGCOlDlu4bUh_N3L8CnTmHErXUMv7Y6DF5/exec';
+  document.getElementById('settings-sheet-url').value=LS.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
+  openModal('settings-modal');
+}
+function saveSettings(){
+  const url=document.getElementById('settings-gs-url').value.trim();
+  if(url) LS.setItem('bsc_gs_url',url);
+  const sheetUrl=document.getElementById('settings-sheet-url').value.trim();
+  if(sheetUrl) LS.setItem('bsc_sheet_url',sheetUrl);
+  closeModal('settings-modal');
+  toast('✅ Settings saved!');
+}
+
+// ══ TECHNICIAN — INIT ══
+function initTech(){
+  const now=new Date();
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // Complaint Date Received — only auto-fill for Sales Team on NEW form
+  // For coord/tech loading from history, this gets overwritten by fmap restore
+  if(_currentRole==='sales'){
+    document.getElementById('t-date').value=todayStr();
+  } else {
+    // Keep existing value if already set (loading from history), else blank
+    const existing=document.getElementById('t-date').value;
+    if(!existing) document.getElementById('t-date').value='';
+  }
+  // Attended On — only auto-fill for Technician (their own date), but leave blank on new form
+  // Don't auto-set — technician picks their own attended date
+  document.getElementById('t-attended').value='';
+  // t-month is now a text field (Complaint Details) — no auto-fill
+  tUpdateMfgRequired();
+}
+function tUpdateMfgRequired(){
+  document.getElementById('t-mfg-req').style.display=isHeaterCode(tv('t-pcode'))?'inline':'none';
+}
+function tSmartFill(){
+  const raw=document.getElementById('t-pcode').value.trim();
+  const upper=raw.toUpperCase();
+  const pdescEl=document.getElementById('t-pdesc');
+  // OTHER: clear both fields so user can type code and description freely
+  if(upper==='OTHER'){
+    const pcodeEl=document.getElementById('t-pcode');
+    pcodeEl.value='';           // clear so user types their own code
+    pcodeEl.removeAttribute('list'); // detach datalist so no suggestions interfere
+    pcodeEl.placeholder='Type product code…';
+    pdescEl.value='';
+    pdescEl.readOnly=false;
+    pdescEl.style.background='';
+    pdescEl.placeholder='Type product description…';
+    pcodeEl.focus();
+    return;
+  }
+  // Restore datalist if it was removed
+  const pcodeEl2=document.getElementById('t-pcode');
+  if(!pcodeEl2.getAttribute('list')) pcodeEl2.setAttribute('list','t-pcode-list');
+  if(PRODUCTS[upper]){document.getElementById('t-pdesc').value=PRODUCTS[upper];tUpdateMfgRequired();return;}
+  const lower=raw.toLowerCase();
+  if(DESC_TO_CODE[lower]){document.getElementById('t-pcode').value=DESC_TO_CODE[lower];document.getElementById('t-pdesc').value=PRODUCTS[DESC_TO_CODE[lower]];tUpdateMfgRequired();return;}
+  for(const[desc,code] of Object.entries(DESC_TO_CODE)){if(desc.includes(lower)&&lower.length>3){document.getElementById('t-pcode').value=code.toUpperCase();document.getElementById('t-pdesc').value=PRODUCTS[code.toUpperCase()];tUpdateMfgRequired();return;}}
+  tUpdateMfgRequired();
+}
+function tMfgFromSerial(){
+  const m=tv('t-serial').match(/20[0-2][0-9]/);
+  if(m){const el=document.getElementById('t-mfg');if(!el.value)el.value=m[0];}
+}
+function tToggleNatureOther(){
+  const v=document.getElementById('t-nature').value;
+  document.getElementById('t-nature-other-wrap').style.display=v==='Others'?'block':'none';
+  if(v!=='Others')document.getElementById('t-nature-other').value='';
+}
+function tToggleWarrOther(){
+  const v=document.getElementById('t-warr').value;
+  document.getElementById('t-warr-other-wrap').style.display=v==='Others'?'block':'none';
+  if(v!=='Others')document.getElementById('t-warr-other').value='';
+}
+function tSetStatus(val,cls,btn){
+  tSelStatus=val;
+  document.querySelectorAll('.st').forEach(b=>b.className='st');
+  btn.classList.add(cls);
+  const isRep=val==='Replacement';
+  document.getElementById('t-replaced-req').style.display=isRep?'inline':'none';
+  const ri=document.getElementById('t-replaced');
+  ri.style.borderColor=isRep?'var(--amber)':'';
+  ri.placeholder=isRep?'Required — e.g. Water Heater × 1…':'e.g. Water Heater × 1, Others × 2…';
+}
+function tp(el,qtyId){
+  el.classList.toggle('on');
+  const q=document.getElementById(qtyId);
+  if(el.classList.contains('on')){q.classList.add('show');q.value=q.value||1;q.focus();}
+  else{q.classList.remove('show');q.value='';}
+}
+function tpOthers(el){
+  el.classList.toggle('on');
+  const wrap=document.getElementById('others-remark-wrap');
+  if(el.classList.contains('on')){wrap.style.display='block';document.getElementById('t-others-remark').focus();}
+  else{wrap.style.display='none';document.getElementById('t-others-remark').value='';}
+}
+function tGetSelectedParts(){
+  const out = {};
+  document.querySelectorAll('.part.on').forEach(el=>{
+    const k = el.dataset.k;
+    const qEl = document.getElementById('q-'+k);
+    out[k] = qEl ? (parseInt(qEl.value)||1) : 1;
+  });
+  return out;
+}
+
+// ══ TECHNICIAN — CORE FUNCTIONS (from R12) ══
+function tGeneratePDF(fname){
+  if(!bscLibReady('pdf')) return;
+  const jsPDF = window.jspdf.jsPDF;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210, H=297, M=12, CW=W-M*2;
+  let y=0;
+  const st = tSelStatus||tv('t-status-custom');
+  const wfStat = _wfStatus||'Pending';
+
+  // ── helpers ──────────────────────────────────────────
+  function chk(need){ if(y+need>H-18){doc.addPage();y=18;} }
+
+  // Draw a section header band
+  function band(title){
+    chk(10);
+    doc.setFillColor(12,59,110);
+    doc.rect(M,y,CW,8,'F');
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+    doc.text(title, M+3, y+5.5);
+    y+=9;
+  }
+
+  // Label on top, value below with bottom border — full width
+  function field1(label, val){
+    doc.setFontSize(9.5); doc.setFont('helvetica','normal'); doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(val||'', CW-2);
+    const lh = 5.2; // line height in mm
+    const textH = Math.max(lines.length * lh, lh);
+    const rowH = 5 + textH + 4; // label(5) + text(textH) + padding(4)
+    chk(rowH + 2);
+    doc.setFontSize(6.5); doc.setFont('helvetica','bold'); doc.setTextColor(80,90,100);
+    doc.text(label, M, y+4);
+    doc.setFontSize(9.5); doc.setFont('helvetica','normal'); doc.setTextColor(20,20,20);
+    doc.text(lines, M, y+9.5);
+    doc.setDrawColor(200,208,216); doc.setLineWidth(0.25);
+    doc.line(M, y+rowH, M+CW, y+rowH);
+    y += rowH + 1;
+  }
+
+  // Two equal columns
+  function field2(l1,v1,l2,v2){
+    const hw = CW/2-2;
+    const x2 = M+CW/2+2;
+    // Calculate height based on longest value
+    doc.setFontSize(9.5); doc.setFont('helvetica','normal');
+    const lines1 = doc.splitTextToSize(v1||'', hw);
+    const lines2 = l2 ? doc.splitTextToSize(v2||'', hw) : [];
+    const lh = 5.2;
+    const textH = Math.max(lines1.length*lh, lines2.length*lh, lh);
+    const rowH = 5 + textH + 3;
+    chk(rowH + 2);
+    doc.setFontSize(6.5); doc.setFont('helvetica','bold'); doc.setTextColor(80,90,100);
+    doc.text(l1, M, y+4);
+    if(l2) doc.text(l2, x2, y+4);
+    doc.setFontSize(9.5); doc.setFont('helvetica','normal'); doc.setTextColor(20,20,20);
+    doc.text(lines1, M, y+9.5);
+    if(l2) doc.text(lines2, x2, y+9.5);
+    doc.setDrawColor(200,208,216); doc.setLineWidth(0.25);
+    doc.line(M, y+rowH, M+CW, y+rowH);
+    y += rowH + 1;
+  }
+
+  // Three equal columns
+  function field3(l1,v1,l2,v2,l3,v3){
+    const w3 = CW/3-1;
+    const xs = [M, M+CW/3+0.5, M+CW*2/3+1];
+    const rowH = 13;
+    chk(rowH + 2);
+    doc.setFontSize(6.5); doc.setFont('helvetica','bold'); doc.setTextColor(80,90,100);
+    [l1,l2,l3].forEach((l,i)=>{ if(l) doc.text(l, xs[i], y+4); });
+    doc.setFontSize(9.5); doc.setFont('helvetica','normal'); doc.setTextColor(20,20,20);
+    [[v1,w3],[v2,w3],[v3,w3]].forEach(([v,mw],i)=>{ if(v) doc.text(String(v), xs[i], y+9.5, {maxWidth:mw}); });
+    doc.setDrawColor(200,208,216); doc.setLineWidth(0.25);
+    doc.line(M, y+rowH, M+CW, y+rowH);
+    y += rowH + 1;
+  }
+
+  // ── PAGE HEADER ──────────────────────────────────────
+  doc.setFillColor(12,59,110); doc.rect(0,0,W,22,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(15); doc.setFont('helvetica','bold');
+  doc.text('BSC COMPLAINT SERVICE REPORT', W/2, 10, {align:'center'});
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text('Bukamal  \u00b7  RDMS/FM/04  \u00b7  Issue 1', W/2, 17, {align:'center'});
+
+  // Status badge below header
+  const wfColors={Pending:[255,243,224,230,81,0],Assigned:[227,242,253,12,59,110],Completed:[232,245,233,46,125,50]};
+  const wfc=wfColors[wfStat]||wfColors['Pending'];
+  doc.setFillColor(wfc[0],wfc[1],wfc[2]);
+  doc.roundedRect(W-M-36,24,36,9,2,2,'F');
+  doc.setFontSize(7.5); doc.setFont('helvetica','bold');
+  doc.setTextColor(wfc[3],wfc[4],wfc[5]);
+  doc.text(wfStat.toUpperCase(), W-M-18, 30, {align:'center'});
+  y=36;
+
+  // ── 1. TECHNICIAN & VISIT ────────────────────────────
+  band('TECHNICIAN & VISIT');
+  field2('Complaint No.', tv('t-complaint-no'), 'Dept', tv('t-dept'));
+  field2('Complaint Date Received', tv('t-date'), 'Received Time', fmtTime12(tv('t-date-time')));
+  field2('Attended On', tv('t-attended'), 'Attended Time', fmtTime12(tv('t-attended-time')));
+  field2('Assigned To', tv('t-assigned-to'), 'Submitted by (SE)', tv('t-se'));
+  field2('Month', tv('t-month'), 'Area', tv('t-area'));
+
+  // ── 2. CLIENT & LOCATION ─────────────────────────────
+  band('CLIENT & LOCATION');
+  field1('Dealer / Client / Contractor', tv('t-dealer'));
+  field2('Contact Number 1', tv('t-contact1'), 'Contact Number 2', tv('t-contact2'));
+  field3('House', tv('t-house'), 'Road', tv('t-road'), 'Block', tv('t-block'));
+
+  // ── 3. PRODUCT ───────────────────────────────────────
+  band('PRODUCT');
+  field2('Product Code', tv('t-pcode'), 'Qty', tv('t-qty'));
+  field1('Product Description', tv('t-pdesc'));
+  field1('Serial No.', tv('t-serial'));
+  field2('MFG Year', tv('t-mfg'), 'Purchase / Batch Date', tv('t-dop'));
+
+  // ── 4. COMPLAINT & WORK DONE ─────────────────────────
+  band('COMPLAINT & WORK DONE');
+  field1('Nature of Complaint', document.getElementById('t-nature').value);
+  field1('Remark / Findings & Work Done', tv('t-remark'));
+  // Status badge
+  chk(20);
+  doc.setFontSize(6.5); doc.setFont('helvetica','bold'); doc.setTextColor(80,90,100);
+  doc.text('STATUS', M, y+4);
+  y+=6;
+  const stColors={
+    'Repair':[232,245,233,46,125,50],
+    'Replacement':[227,242,253,21,101,192],
+    'Warranty void':[255,235,238,198,40,40],
+    'No problem in heater':[255,248,225,245,124,0]
+  };
+  const sc=stColors[st]||[240,240,240,80,80,80];
+  doc.setFillColor(sc[0],sc[1],sc[2]);
+  doc.roundedRect(M,y,CW*0.5,11,2,2,'F');
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(sc[3],sc[4],sc[5]);
+  doc.text(st||'—', M+CW*0.25, y+7.5, {align:'center'});
+  y+=14;
+  if(tv('t-replaced')) field1('Replaced Unit (if Replacement)', tv('t-replaced'));
+
+  // ── 5. SPARE PARTS — 2-column table ─────────────────
+  const PNAMES={
+    Element:'Element', Thermostat:'Thermostat',
+    BottomLidCover:'Bottom Plastic Lid Cover', ORing:'O Ring',
+    Impellor:'Impellor', Bearing:'Bearing',
+    BSV:'Bottom Safety Valve (BSV)', MechSeal:'Mechanical Seal',
+    Capacitor:'Capacitor', TSV:'Top Safety Valve (TSV)',
+    LampIndicator:'Lamp Indicator', FrontBody:'Front Body',
+    ImpellorBackBody:'Impellor Back Body', FrontCover:'Front Cover',
+    Terminal:'Terminal', WindingBase:'Winding Base', WireLegs:'Wire & Legs',
+    Shaft:'Shaft', PowerConnector:'Supply Power Connector', CoverPlate:'Cover Plate',
+    Fan:'Fan', FanCover:'Fan Cover', TopCover:'Top Cover',
+    FlexibleHose:'Flexible Hose', FrontCasing:'Front Casing',
+    Anod:'Anod', ThermoGauge:'Thermo metre Gauge', Filter:'Filter',
+    Hook:'Hook', RubberGasket:'Rubber Gasket', Stator:'Stator',
+    TeflonWasher:'Teflon Washer', Flange:'Flange', BladeBrush:'Blade/Brush',
+    Knob:'Knob', Bowl:'Bowl', Gasket:'Gasket', Socket:'Socket',
+    Bolt:'Bolt', WallGasket:'Wall Support Gasket', Motor:'Motor',
+    Others:'Others Parts'
+  };
+  const partsObj=tGetSelectedParts();
+  const othersOn=document.getElementById('part-others').classList.contains('on');
+  const othersText=othersOn?tv('t-others-remark'):'';
+  const partEntries=Object.entries(partsObj).filter(([k])=>k!=='Others');
+
+  band('SPARE PARTS USED');
+
+  {
+    // ALL parts list — show all, qty filled for selected ones
+    const ALL_PARTS=[
+      ['Element','Thermostat'],
+      ['BottomLidCover','ORing'],
+      ['Impellor','Bearing'],
+      ['BSV','MechSeal'],
+      ['Capacitor','TSV'],
+      ['LampIndicator','FrontBody'],
+      ['ImpellorBackBody','FrontCover'],
+      ['Terminal','WindingBase'],
+      ['WireLegs','Shaft'],
+      ['PowerConnector','CoverPlate'],
+      ['Fan','FanCover'],
+      ['TopCover','FlexibleHose'],
+      ['FrontCasing','Anod'],
+      ['ThermoGauge','Filter'],
+      ['Hook','RubberGasket'],
+      ['Stator','TeflonWasher'],
+      ['Flange','BladeBrush'],
+      ['Knob','Bowl'],
+      ['Gasket','Socket'],
+      ['Bolt','WallGasket'],
+      ['Motor','Others']
+    ];
+    const cw2=(CW-2)/2;
+    // Table header
+    doc.setFillColor(12,59,110);
+    doc.rect(M,y,CW,8,'F');
+    doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+    doc.text('Part Name', M+3, y+5.5);
+    doc.text('Qty', M+cw2-4, y+5.5, {align:'right'});
+    doc.text('Part Name', M+cw2+4, y+5.5);
+    doc.text('Qty', M+CW-2, y+5.5, {align:'right'});
+    doc.setDrawColor(180,190,200); doc.setLineWidth(0.3);
+    doc.line(M+cw2, y, M+cw2, y+8);
+    doc.line(M,y+8,M+CW,y+8);
+    y+=9;
+
+    for(var ri=0; ri<ALL_PARTS.length; ri++){
+      chk(9);
+      const k1=ALL_PARTS[ri][0], k2=ALL_PARTS[ri][1];
+      const n1=PNAMES[k1]||k1, n2=PNAMES[k2]||k2;
+      const q1=partsObj[k1]||0, q2=partsObj[k2]||0;
+      // Alternating row bg
+      if(ri%2===0){ doc.setFillColor(248,250,254); doc.rect(M,y,CW,8,'F'); }
+      // Left column
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(20,20,20);
+      doc.text(n1, M+3, y+5.5, {maxWidth:cw2-16});
+      // Qty box left
+      doc.setDrawColor(180,190,210); doc.setLineWidth(0.2);
+      doc.rect(M+cw2-16, y+1, 12, 6);
+      if(q1>0){
+        doc.setFont('helvetica','bold'); doc.setTextColor(21,101,192);
+        doc.text(String(q1), M+cw2-10, y+5.5, {align:'center'});
+      }
+      // Right column
+      doc.setFont('helvetica','normal'); doc.setTextColor(20,20,20);
+      doc.text(n2, M+cw2+4, y+5.5, {maxWidth:cw2-16});
+      // Qty box right
+      doc.rect(M+CW-16, y+1, 12, 6);
+      if(q2>0){
+        doc.setFont('helvetica','bold'); doc.setTextColor(21,101,192);
+        doc.text(String(q2), M+CW-10, y+5.5, {align:'center'});
+      }
+      // Dividers
+      doc.setDrawColor(210,218,226); doc.setLineWidth(0.2);
+      doc.line(M+cw2, y, M+cw2, y+8);
+      doc.line(M,y+8,M+CW,y+8);
+      y+=8;
+    }
+    // Others describe row — full width
+    chk(10);
+    doc.setFillColor(248,250,254); doc.rect(M,y,CW,9,'F');
+    doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(80,90,100);
+    doc.text('Others - describe', M+3, y+4);
+    doc.setFont('helvetica','normal'); doc.setTextColor(20,20,20);
+    if(othersText) doc.text(othersText, M+3, y+8, {maxWidth:CW-6});
+    doc.setDrawColor(210,218,226); doc.setLineWidth(0.2);
+    doc.line(M,y+9,M+CW,y+9);
+    y+=11;
+  }
+
+  // ── SIGNATURE ────────────────────────────────────────
+  chk(28);
+  y+=4;
+  doc.setDrawColor(12,59,110); doc.setLineWidth(0.5);
+  const sw=CW/2-12;
+  doc.line(M,y,M+sw,y);
+  doc.line(M+CW-sw,y,M+CW,y);
+  doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(80,90,100);
+  doc.text('Technician Signature', M+sw/2, y+5, {align:'center'});
+  doc.text('Customer / Authorised Signature', M+CW-sw/2, y+5, {align:'center'});
+  y+=14;
+
+  // ── FOOTER ───────────────────────────────────────────
+  doc.setFillColor(240,244,248);
+  doc.rect(0,H-10,W,10,'F');
+  doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(100,110,120);
+  doc.text('RDMS/FM/04, Issue 1  \u00b7  Bukamal Service Platform', W/2, H-4, {align:'center'});
+
+  bscSavePdf(doc, fname+'.pdf');
+}
+
+function tDownloadExcel(fname){
+  if(!bscLibReady('xlsx')) return;
+  const HEADERS = tBuildHeaders();
+  const row = tBuildExcelRow();
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([HEADERS,row]);
+  ws['!cols']=HEADERS.map(hd=>({wch:Math.max(hd.length,12)}));
+  XLSX.utils.book_append_sheet(wb,ws,'New Entry');
+  XLSX.writeFile(wb,(fname||'BSC_Report')+'.xlsx');
+}
+
+function tGetFname(){
+  return 'BSC_'+tv('t-tech').replace(/[^a-zA-Z0-9]/g,'-')+'_'+tv('t-attended').replace(/-/g,'');
+}
+function tFingerprint(){
+  return [tv('t-tech'),tv('t-attended'),tv('t-serial'),tv('t-dealer')].join('|').toLowerCase().replace(/\s+/g,'');
+}
+
+// ══ TECHNICIAN — VALIDATE ══
+function tValidate(){
+  // Helper: skip validation if field is hidden or role-locked
+  function shouldSkip(id){
+    const el=document.getElementById(id);
+    if(!el) return true;
+    if(el.style.display==='none') return true;
+    if(el.getAttribute('data-role-locked')==='true') return true;
+    // Skip if parent field div is hidden
+    const parent=el.closest('.field');
+    if(parent&&parent.style.display==='none') return true;
+    // Skip if parent card is hidden
+    const card=el.closest('.card');
+    if(card&&card.style.display==='none') return true;
+    return false;
+  }
+
+  // Required fields per role
+  // Sales: only header fields (no remark/nature/status — those are for tech)
+  // Coord: header + client + product (no remark/nature/status — those are for tech)
+  // Tech: everything visible
+
+  const isSales  = _currentRole==='sales';
+  const isCoord  = _currentRole==='coord';
+  const isTech   = _currentRole==='tech';
+
+  // Common fields for all roles (skip if hidden/locked)
+  const commonReq=[['t-se','Submitted by (SE)'],['t-dept','Department'],['t-area','Area']];
+  // Client fields — sales + coord + tech
+  const clientReq=[['t-dealer','Client / Dealer'],['t-contact1','Contact Number'],
+    ['t-house','House'],['t-road','Road'],['t-block','Block']];
+  // Product fields — sales + coord + tech
+  const productReq=[['t-pcode','Product Code'],['t-pdesc','Product Description'],
+    ['t-serial','Serial No.'],['t-dop','Purchase / Batch Date']];
+  // Work fields — TECH ONLY
+  const workReq=[['t-remark','Remark / Work Done']];
+
+  // Sales Team: product fields optional (may be filled later by coord/tech)
+  let fieldsToCheck=[...commonReq,...clientReq,...(isSales?[]:productReq)];
+  if(isTech) fieldsToCheck=[...fieldsToCheck,...workReq];
+
+  for(const[id,label] of fieldsToCheck){
+    if(shouldSkip(id)) continue;
+    if(!tv(id)){toast('Please fill in: '+label);document.getElementById(id).focus();return false;}
+  }
+
+  // Tech field — required for coord and tech, not sales
+  if(!isSales && !shouldSkip('t-tech') && !tv('t-tech')){
+    toast('Please fill in: Technician');document.getElementById('t-tech').focus();return false;
+  }
+
+  if(!shouldSkip('t-pcode')&&isHeaterCode(tv('t-pcode'))&&!tv('t-mfg')){
+    toast('Please fill in: MFG Year');document.getElementById('t-mfg').focus();return false;
+  }
+
+  // Work Done card validation — TECHNICIAN ONLY
+  if(isTech){
+    const workCard=document.querySelector('.card[data-card="complaint-work-card"]');
+    if(workCard&&workCard.style.display!=='none'){
+      const nat=document.getElementById('t-nature').value;
+      if(!nat){toast('Please select Nature of complaint');document.getElementById('t-nature').focus();return false;}
+      if(nat==='Others'&&!tv('t-nature-other')){toast('Please describe the complaint');document.getElementById('t-nature-other').focus();return false;}
+      if(!parseInt(tv('t-qty'))||parseInt(tv('t-qty'))<1){toast('Please enter a valid Qty.');return false;}
+      if(document.getElementById('part-others').classList.contains('on')&&!tv('t-others-remark')){toast('Please describe Others spare part(s)');return false;}
+      if(!tSelStatus&&!tv('t-status-custom')){toast('Please select a Status');return false;}
+      if(tSelStatus==='Replacement'&&!tv('t-replaced')){toast('Please fill in: Replaced Unit');document.getElementById('t-replaced').focus();return false;}
+    }
+  }
+  return true;
+}
+
+// ══ TECHNICIAN — ACTIONS ══
+function tSaveReport(){
+  if(!tValidate()) return;
+  toast('⏳ Generating PDF…');
+  const fname=tGetFname();
+  setTimeout(()=>{
+    try{tGeneratePDF(fname);}catch(e){toast('PDF error: '+e.message);return;}
+    saveLocalReport('tech',fname);
+    toast('✅ PDF saved!');
+  },100);
+}
+
+// ══ BUILD ROW — aligned to HEADERS array ══
+function tBuildRow(){
+  const st = tSelStatus||tv('t-status-custom');
+  const parts = tGetSelectedParts();
+  const natSel = document.getElementById('t-nature').value;
+  const row = new Array(71).fill('');
+  // Get existing Si from hidden field (for edit mode)
+  const existingSi = document.getElementById('t-si-hidden')?document.getElementById('t-si-hidden').value:'';
+  row[0]  = existingSi||'';                    // Si
+  row[1]  = tv('t-complaint-no');              // Complaint No
+  row[2]  = tv('t-dealer');                    // Dealer/Client/Contractor
+  row[3]  = tv('t-house');                     // House
+  row[4]  = tv('t-road');                      // Road
+  row[5]  = tv('t-block');                     // Block
+  row[6]  = tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):''); // Client Contact
+  row[7]  = tv('t-dept');                      // Department
+  row[8]  = tv('t-area');                      // Area
+  row[9]  = tv('t-se');                        // Submitted by
+  row[10] = tv('t-pcode');                     // Product Code
+  row[11] = tv('t-pdesc');                     // Product Description
+  row[12] = tv('t-qty')||1;                    // Qty.
+  row[13] = natSel==='Others'?'Others: '+tv('t-nature-other'):natSel; // Nature of complaint
+  row[14] = tv('t-date');                      // Complaint Received Date ← from Sales Team, preserved by all roles
+  row[15] = fmtTime12(tv('t-date-time'));      // Complaint Received Time
+  row[16] = tv('t-remark');                    // Remark
+  row[17] = tv('t-dop');                       // Date of Purchasing
+  row[18] = tv('t-serial');                    // Serial No.
+  row[19] = tv('t-mfg');                       // MFG Year
+  // Technician: for coord role, also copy Assigned To → Technician column
+    row[20] = tv('t-assigned-to')||tv('t-tech')||''; // Technician = same as Assigned To
+  row[21] = tv('t-attended');                  // Attended on
+  row[22] = fmtTime12(tv('t-attended-time')); // Complaint Attended Time
+  row[23] = tv('t-month');                     // Month
+  row[24] = st;                                // Status
+  row[25] = tv('t-assigned-to')||'';          // Assigned To
+  row[26] = _wfStatus||'Pending';             // Workflow Status
+  row[27] = tv('t-warr')==='Others'?tv('t-warr-other'):tv('t-warr'); // Remarks/Warranty Status
+  row[28] = tv('t-replaced')||'';             // Replaced Unit
+  // Spare parts [29-70] — aligned to sheet cols AD(30)-BR(70)
+  // row index = sheet col index - 1
+  if(parts['Element'])          row[29]=parts['Element'];          // AD col30
+  if(parts['Thermostat'])       row[30]=parts['Thermostat'];       // AE col31
+  if(parts['BottomLidCover'])   row[31]=parts['BottomLidCover'];   // AF col32
+  if(parts['ORing'])            row[32]=parts['ORing'];            // AG col33
+  if(parts['Impellor'])         row[33]=parts['Impellor'];         // AH col34
+  if(parts['Bearing'])          row[34]=parts['Bearing'];          // AI col35
+  if(parts['BSV'])              row[35]=parts['BSV'];              // AJ col36
+  if(parts['MechSeal'])         row[36]=parts['MechSeal'];         // AK col37
+  if(parts['Capacitor'])        row[37]=parts['Capacitor'];        // AL col38
+  if(parts['TSV'])              row[38]=parts['TSV'];              // AM col39
+  if(parts['LampIndicator'])    row[39]=parts['LampIndicator'];    // AN col40
+  if(parts['FrontBody'])        row[40]=parts['FrontBody'];        // AO col41
+  if(parts['ImpellorBackBody']) row[41]=parts['ImpellorBackBody']; // AP col42
+  if(parts['FrontCover'])       row[42]=parts['FrontCover'];       // AQ col43
+  if(parts['Terminal'])         row[43]=parts['Terminal'];         // AR col44
+  if(parts['WindingBase'])      row[44]=parts['WindingBase'];      // AS col45
+  if(parts['WireLegs'])         row[45]=parts['WireLegs'];         // AT col46
+  if(parts['Shaft'])            row[46]=parts['Shaft'];            // AU col47
+  if(parts['PowerConnector'])   row[47]=parts['PowerConnector'];   // AV col48
+  if(parts['CoverPlate'])       row[48]=parts['CoverPlate'];       // AW col49
+  if(parts['Fan'])              row[49]=parts['Fan'];              // AX col50
+  if(parts['FanCover'])         row[50]=parts['FanCover'];         // AY col51
+  if(parts['TopCover'])         row[51]=parts['TopCover'];         // AZ col52
+  if(parts['FlexibleHose'])     row[52]=parts['FlexibleHose'];     // BA col53
+  if(parts['FrontCasing'])      row[53]=parts['FrontCasing'];      // BB col54
+  if(parts['Anod'])             row[54]=parts['Anod'];             // BC col55
+  if(parts['ThermoGauge'])      row[55]=parts['ThermoGauge'];      // BD col56
+  if(parts['Filter'])           row[56]=parts['Filter'];           // BE col57
+  if(parts['Hook'])             row[57]=parts['Hook'];             // BF col58
+  if(parts['RubberGasket'])     row[58]=parts['RubberGasket'];     // BG col59
+  if(parts['Stator'])           row[59]=parts['Stator'];           // BH col60
+  if(parts['TeflonWasher'])     row[60]=parts['TeflonWasher'];     // BI col61
+  if(parts['Flange'])           row[61]=parts['Flange'];           // BJ col62
+  if(parts['BladeBrush'])       row[62]=parts['BladeBrush'];       // BK col63
+  if(parts['Knob'])             row[63]=parts['Knob'];             // BL col64
+  if(parts['Bowl'])             row[64]=parts['Bowl'];             // BM col65
+  if(parts['Gasket'])           row[65]=parts['Gasket'];           // BN col66
+  if(parts['Socket'])           row[66]=parts['Socket'];           // BO col67
+  if(parts['Bolt'])             row[67]=parts['Bolt'];             // BP col68
+  if(parts['WallGasket'])       row[68]=parts['WallGasket'];       // BQ col69
+  if(parts['Motor'])            row[69]=parts['Motor'];            // BR col70
+  row[70] = document.getElementById('part-others')&&document.getElementById('part-others').classList.contains('on')?tv('t-others-remark'):''; // BS col71
+  return row;
+}
+
+
+async function tSaveToSheets(){
+  if(!tValidate()) return;
+  const fp=tFingerprint();
+  // isEditing check (kept for reference)
+  const isEditing = tLoadedKey && tLoadedKey.startsWith('__sheet__');
+  const gsUrl=getGsUrl();
+  toast('☁️ Saving to Google Sheets…');
+  const fname=tGetFname();
+  const row=tBuildRow();
+  const HEADERS=['Si','Complaint No','Dealer/Client/Contractor','House','Road','Block',
+    'Client Contact','Department','Area','Submitted by','Product Code','Product Description','Qty.',
+    'Nature of complaint','Complaint Received Date','Complaint Received Time','Remark',
+    'Date of Purchasing','Serial No.','MFG Year','Technician','Attended on','Complaint Attended Time',
+    'Complaint Details','Status','Assigned To','Workflow Status','Remarks/Warranty Status','Replaced Unit',
+    'Element','Thermostat','Bottom Plastic Lid Cover','O Ring','Impellor','Bearing',
+    'Down Safety Valve/BSV','Mechanical Seal','Capacitor','Top Safety Valve','Lamp Indicator',
+    'Front Body','Impellor Back Body','Front Cover','Terminal','Winding Base','Wire & legs',
+    'Shaft','Supply Power Connector','Cover Plate','Fan','Fan Cover','Top Cover',
+    'Flexible Hose','Front Casing','Anod','Thermo metre Gauge','Filter','Hook',
+    'Rubber Gasket','Stator','Teflon Washer','Flange','Blade/Brush','Knob','Bowl',
+    'Gasket','Socket','Bolt','Wall Support gasket','Motor','Others Parts'];
+  const payload={sheetTab:'Reports'};
+  HEADERS.forEach((h,i)=>{payload[h]=row[i]||'';});
+  // Always explicitly set complaint no (belt + suspenders)
+  const compNo = tv('t-complaint-no');
+  payload['Complaint No'] = compNo; // ensure it's set even if row[1] was empty
+
+  // ── SAVE GUARD — prevent double tap ──────────────────
+  if(window._bscSaving){
+    toast('⏳ Already saving, please wait…');
+    return;
+  }
+  if(!window._savedComplaints) window._savedComplaints = {};
+
+  // DUPLICATE PREVENTION — definitive logic:
+  // CIS numbers are only generated ONCE per complaint.
+  // Any save with an existing CIS number MUST be an update, never a new row.
+  // Only truly new complaints (freshly generated CIS from Sales Team) go as newRow.
+  const er = window._editingRow||{};
+  const isCIS = compNo && compNo.startsWith('CIS-');
+  const wasLoaded = (tLoadedKey && tLoadedKey.startsWith('__sheet__'));
+  const wasSaved  = compNo && window._savedComplaints['updated_'+compNo];
+  const hasEr     = er.complaintNo && er.complaintNo === compNo;
+  // A complaint is NEW only if: it's a fresh CIS not in savedComplaints, not loaded from history
+  const isNewEntry = isCIS && !wasLoaded && !wasSaved && !hasEr && !er.si;
+
+  if(!isNewEntry && isCIS){
+    // ALWAYS updateRow for any existing CIS complaint
+    payload['action']          = 'updateRow';
+    payload['complaintNo']     = compNo;
+    payload['si']              = er.si||'';
+    payload['compositeDealer'] = er.dealer||tv('t-dealer')||'';
+    payload['compositeDate']   = er.attendedOn||'';
+    payload['compositeTech']   = er.tech||tv('t-tech')||'';
+    console.log('📝 UPDATE ROW — '+compNo);
+  } else {
+    // Fresh new complaint from Sales Team
+    console.log('➕ NEW ROW — '+compNo);
+  }
+
+  // Lock button to prevent double tap
+  window._bscSaving = true;
+  const saveBtn = document.getElementById('abar-tech');
+  if(saveBtn) saveBtn.style.opacity='0.5';
+
+  try{
+    await fetch(gsUrl,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=UTF-8'},
+      body:JSON.stringify(payload)
+    });
+    // Mark complaint as existing — all future saves by any role will updateRow
+    window._savedComplaints['updated_'+compNo] = true;
+    // Keep _editingRow alive with complaint no for subsequent saves
+    if(!window._editingRow) window._editingRow = {};
+    window._editingRow.complaintNo = compNo;
+    saveLocalReport('tech',fname,true);
+    toast(payload['action']==='updateRow'?'✅ Record updated in Google Sheets!':'✅ Saved to Google Sheets!');
+    tLoadedKey=null;
+    window._editingRow=null;
+    const bn=document.getElementById('edit-banner-tech');
+    if(bn) bn.style.display='none';
+  }catch(e){
+    toast('⚠️ Cannot reach Google Sheets: '+e.message);
+  } finally {
+    setTimeout(function(){
+      window._bscSaving=false;
+      if(saveBtn) saveBtn.style.opacity='';
+    }, 5000);
+  }
+}
+function tOpenWA(){
+  if(!tValidate()) return;
+  const fname=tGetFname();
+  const st=tSelStatus||tv('t-status-custom');
+  const house=tv('t-house'); const road=tv('t-road'); const block=tv('t-block');
+  const address=[house?'House '+house:'',road?'Road '+road:'',block?'Block '+block:'',tv('t-area')]
+    .filter(Boolean).join(', ');
+  const remark=tv('t-remark');
+  const compNo=tv('t-complaint-no');
+
+  if(_currentRole==='sales'){
+    // Sales role: no file download, just WhatsApp with full address
+    const msg=encodeURIComponent(
+      '🔧 *BSC New Complaint — '+compNo+'*\n━━━━━━━━━━━━━━━\n'+
+      '🏠 *Client:* '+tv('t-dealer')+'\n'+
+      '📞 *Contact:* '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\n'+
+      '📍 *Address:* '+address+'\n'+
+      '🏢 *Dept:* '+tv('t-dept')+'\n'+
+      '🔩 *Product:* '+tv('t-pcode')+' — '+tv('t-pdesc')+'\n'+
+      '📋 *Nature:* '+document.getElementById('t-nature').value+'\n'+
+      '━━━━━━━━━━━━━━━\n'+
+      '⏳ *Status: Pending* — awaiting coordinator assignment' + '\n\n' +
+      '📱 *To assign technician:*' + '\n' +
+      '1️⃣ Open *BSC App*' + '\n' +
+      '2️⃣ Select *Coordinator* role' + '\n' +
+      '3️⃣ Tap *📂 History* → search *' + compNo + '*' + '\n' +
+      '4️⃣ Load & assign technician'
+    );
+    window.open('https://wa.me/?text='+msg,'_blank');
+    toast('✅ WhatsApp opened');
+  } else if(_currentRole==='coord'){
+    // Coordinator: WhatsApp only, no PDF
+    const tech2=tv('t-assigned-to')||tv('t-tech');
+    const msg=encodeURIComponent(
+        '*BSC Service Report — '+compNo+'*\n━━━━━━━━━━━━━━━\n'+
+        '👷 Assigned Technician: '+(tv('t-assigned-to')||tv('t-tech'))+'\n'+
+        '🏠 Client: '+tv('t-dealer')+'\n'+
+        '📞 Contact: '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\n'+
+        '📍 Address: '+address+'\n'+
+        '🏢 Dept: '+tv('t-dept')+'\n'+
+        '📅 Attended: '+tv('t-attended')+'\n'+
+        '🔧 Complaint: '+document.getElementById('t-nature').value+'\n'+
+        '✅ Status: '+st+'\n'+
+        '📝 Remark: '+remark.substring(0,120)+(remark.length>120?'…':'')+'\n'+
+        '━━━━━━━━━━━━━━━\n'+
+        '📎 Files: '+fname+'.pdf & '+fname+'.xlsx\n'+
+        '_(Please attach both files to this message)_' + '\n\n' +
+        '📱 *To view full report:*' + '\n' +
+        '1️⃣ Open *BSC App*' + '\n' +
+        '2️⃣ Select your role' + '\n' +
+        '3️⃣ Tap *📂 History* → search *' + compNo + '*'
+      );
+    window.open('https://wa.me/?text='+msg,'_blank');
+    toast('✅ WhatsApp opened');
+  } else {
+    // Technician: WhatsApp only — no PDF
+    const msg2=encodeURIComponent(
+      '✅ *BSC Service Completed — '+compNo+'*'+'\n━━━━━━━━━━━━━━━'+'\n'+
+      '👷 Assigned To: '+(tv('t-assigned-to')||tv('t-tech'))+'\n'+
+      '🏠 Client: '+tv('t-dealer')+'\n'+
+      '📞 Contact: '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\\n'+
+      '📍 Address: '+address+'\n'+
+      '🔧 Status: *'+st+'*'+'\n'+
+      '📋 Remark: '+(remark.substring(0,120)+(remark.length>120?'…':''))+'\n'+
+      '━━━━━━━━━━━━━━━'+'\n'+
+      '📱 *To view:*'+'\n'+
+      '1️⃣ Open *BSC App*'+'\n'+
+      '2️⃣ Select your role'+'\n'+
+      '3️⃣ open *📂 History* → search *'+compNo+'*'
+    );
+    window.open('https://wa.me/?text='+msg2,'_blank');
+    toast('✅ WhatsApp opened');
+  }
+}
+function tNewReport(){
+  if(!confirm('Clear form for a new report?')) return;
+  tLoadedKey=null;
+  const siHiddenNew=document.getElementById('t-si-hidden'); if(siHiddenNew) siHiddenNew.value='';
+  const bn=document.getElementById('edit-banner-tech'); if(bn) bn.style.display='none';
+  document.querySelectorAll('#screen-tech input[type=text],#screen-tech input[type=number],#screen-tech input[type=tel],#screen-tech textarea').forEach(el=>{if(el.id==='t-qty')el.value='1';else el.value='';});
+  document.querySelectorAll('#screen-tech select').forEach(el=>el.selectedIndex=0);
+  document.querySelectorAll('.part.on').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.part-qty').forEach(el=>{el.classList.remove('show');el.value='';});
+  document.getElementById('part-others').classList.remove('on');
+  document.getElementById('others-remark-wrap').style.display='none';
+  document.querySelectorAll('.st').forEach(b=>b.className='st');
+  tSelStatus='';
+  document.getElementById('t-replaced-req').style.display='none';
+  document.getElementById('t-replaced').style.borderColor='';
+  document.getElementById('t-nature-other-wrap').style.display='none';
+  initTech(); window.scrollTo(0,0); toast('Ready for new report');
+  // Re-generate complaint number for sales role
+  if(_currentRole==='sales') generateComplaintNo();
+}
+
+// ══ SALES — INIT & VALIDATE ══
+function initSales(){
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('s-date').value=todayStr();
+  document.getElementById('s-month').value=months[new Date().getMonth()];
+}
+function sToggleOutcomeOther(){
+  const v=document.getElementById('s-outcome').value;
+  document.getElementById('s-outcome-other-wrap').style.display=v==='Others'?'block':'none';
+  if(v!=='Others')document.getElementById('s-outcome-other').value='';
+}
+function sValidate(){
+  const req=[['s-se','Sales Executive'],['s-date','Visit Date'],['s-visit-type','Visit Type'],
+    ['s-customer','Customer Name'],['s-phone','Contact Number'],['s-area','Area'],
+    ['s-products','Products Discussed'],['s-outcome','Outcome'],['s-remarks','Visit Remarks']];
+  for(const[id,label] of req){if(!tv(id)){toast('Please fill in: '+label);document.getElementById(id).focus();return false;}}
+  if(tv('s-outcome')==='Others'&&!tv('s-outcome-other')){toast('Please describe the outcome');return false;}
+  return true;
+}
+function sBuildPayload(){
+  const outcome=tv('s-outcome')==='Others'?tv('s-outcome-other'):tv('s-outcome');
+  return{sheetTab:'Reports',
+    'Date':tv('s-date'),'Time':fmtTime12(tv('s-time')),'Sales Executive':tv('s-se'),
+    'Month':tv('s-month'),'Visit Type':tv('s-visit-type'),
+    'Customer / Company':tv('s-customer'),'Contact Person':tv('s-contact-name'),
+    'Contact Number':tv('s-phone'),'WhatsApp Number':tv('s-wa-num'),
+    'Area':tv('s-area'),'Department':tv('s-dept'),
+    'Products Discussed':tv('s-products'),
+    'Estimated Order Value (BHD)':tv('s-order-value'),
+    'Order Probability':tv('s-probability'),
+    'Outcome':outcome,'Remarks / Notes':tv('s-remarks'),
+    'Next Follow-up Date':tv('s-followup'),'Next Action':tv('s-next-action'),
+    'Competitor Brands':tv('s-competitor'),'Market Feedback':tv('s-feedback')};
+}
+function sSaveReport(){
+  if(!sValidate()) return;
+  if(!bscLibReady('xlsx')) return;
+  const payload=sBuildPayload();
+  const fname='BSC_Sales_'+tv('s-se').replace(/[^a-zA-Z0-9]/g,'-')+'_'+tv('s-date').replace(/-/g,'');
+  const HEADERS=Object.keys(payload).filter(k=>k!=='sheetTab');
+  const row=HEADERS.map(h=>payload[h]||'');
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([HEADERS,row]);
+  ws['!cols']=HEADERS.map(h=>{return{wch:Math.max(h.length,14)}});
+  XLSX.utils.book_append_sheet(wb,ws,'Sales Visit');
+  XLSX.writeFile(wb,fname+'.xlsx');
+  saveLocalReport('sales',fname);
+  toast('✅ Excel downloaded!');
+}
+async function sSaveToSheets(){
+  if(!sValidate()) return;
+  const fp=[tv('s-se'),tv('s-date'),tv('s-customer')].join('|').toLowerCase();
+  const dup=LS.keys().filter(k=>k.startsWith('bsc_sales_')).some(k=>{
+    try{const s=JSON.parse(LS.getItem(k)||'{}');return s._fp===fp&&s._sent;}catch(e){return false;}
+  });
+  if(dup&&!confirm('⚠️ This report appears already sent to Sheets. Send again?')) return;
+  toast('☁️ Saving Sales report to Google Sheets…');
+  const payload=sBuildPayload();
+  const fname='BSC_Sales_'+tv('s-se').replace(/[^a-zA-Z0-9]/g,'-')+'_'+tv('s-date').replace(/-/g,'');
+  payload['Excel File']=fname+'.xlsx';
+  const gsUrl=getGsUrl();
+  try{
+    await fetch(gsUrl,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=UTF-8'},
+      body:JSON.stringify(payload)
+    });
+    saveLocalReport('sales',fname,true);
+    toast('✅ Saved to Google Sheets!');
+    sLoadedKey=null;
+    const bn=document.getElementById('edit-banner-sales');
+    if(bn) bn.style.display='none';
+  }catch(e){
+    toast('⚠️ Cannot reach Google Sheets: '+e.message);
+  }
+}
+function sOpenWA(){
+  if(!sValidate()) return;
+  const outcome=tv('s-outcome')==='Others'?tv('s-outcome-other'):tv('s-outcome');
+  const remarks=tv('s-remarks');
+  const msg=encodeURIComponent(
+    '*BSC Sales Visit Report — Bukamal*\n━━━━━━━━━━━━━━━\n'+
+    '👤 SE: '+tv('s-se')+'\n'+
+    '📅 Date: '+tv('s-date')+(tv('s-time')?' at '+fmtTime12(tv('s-time')):'')+'\n'+
+    '🏢 Customer: '+tv('s-customer')+'\n'+
+    '📍 Area: '+tv('s-area')+'\n'+
+    '🗂️ Visit Type: '+tv('s-visit-type')+'\n'+
+    '📦 Products: '+tv('s-products').substring(0,100)+'\n'+
+    '✅ Outcome: '+outcome+'\n'+
+    '📝 Remarks: '+remarks.substring(0,120)+(remarks.length>120?'…':'')+'\n'+
+    '━━━━━━━━━━━━━━━'+
+    (tv('s-followup')?'\n📆 Follow-up: '+tv('s-followup'):'')
+  );
+  window.open('https://wa.me/?text='+msg,'_blank');
+  toast('WhatsApp opened');
+}
+function sNewReport(){
+  if(!confirm('Clear form for a new report?')) return;
+  sLoadedKey=null;
+  const bn=document.getElementById('edit-banner-sales'); if(bn) bn.style.display='none';
+  document.querySelectorAll('#screen-sales input,#screen-sales textarea').forEach(el=>{if(el.type!=='button')el.value='';});
+  document.querySelectorAll('#screen-sales select').forEach(el=>el.selectedIndex=0);
+  document.getElementById('s-outcome-other-wrap').style.display='none';
+  initSales(); window.scrollTo(0,0); toast('Ready for new sales report');
+}
+
+// ══ HISTORY — SAVE & LOAD ══
+function saveLocalReport(role,fname,sent=false){
+  const prefix='bsc_'+role+'_';
+  const state={_fname:fname,_savedAt:new Date().toLocaleString('en-GB'),_sent:sent};
+  if(role==='tech'){
+    state._fp=tFingerprint();
+    ['t-tech','t-se','t-month','t-date','t-date-time','t-attended','t-attended-time',
+     't-dealer','t-contact1','t-contact2','t-house','t-road','t-block','t-area','t-dept',
+     't-pcode','t-pdesc','t-qty','t-serial','t-mfg','t-dop','t-nature','t-nature-other',
+     't-remark','t-status-custom','t-replaced','t-others-remark',
+     't-si-hidden','t-complaint-no'
+    ].forEach(id=>{const el=document.getElementById(id);if(el)state[id]=el.value;});
+    state._status=tSelStatus;
+    state._parts={};
+    document.querySelectorAll('.part.on').forEach(el=>{
+      const k=el.dataset.k; const qEl=document.getElementById('q-'+k);
+      state._parts[k]=qEl?qEl.value:'1';
+    });
+    if(document.getElementById('part-others').classList.contains('on'))state._othersOn=true;
+  }else{
+    state._fp=[tv('s-se'),tv('s-date'),tv('s-customer')].join('|').toLowerCase();
+    ['s-se','s-month','s-date','s-time','s-visit-type','s-customer','s-contact-name',
+     's-phone','s-wa-num','s-area','s-dept','s-products','s-order-value','s-probability',
+     's-outcome','s-outcome-other','s-remarks','s-followup','s-next-action','s-competitor','s-feedback'
+    ].forEach(id=>{const el=document.getElementById(id);if(el)state[id]=el.value;});
+  }
+  // FIX: If editing an existing report, overwrite it instead of creating a new entry.
+  // For sheet-sourced records (key starts with __sheet__), store under that key directly
+  // so repeated edits don't keep creating new local entries.
+  const editKey = role==='tech' ? tLoadedKey : sLoadedKey;
+  if(editKey && (LS.getItem(editKey) || editKey.startsWith('__sheet__'))){
+    state._editedAt = new Date().toLocaleString('en-GB');
+    LS.setItem(editKey, JSON.stringify(state));
+  } else {
+    const allKeys=LS.keys().filter(k=>k.startsWith(prefix)).sort();
+    if(allKeys.length>=50)LS.removeItem(allKeys[0]);
+    LS.setItem(prefix+Date.now(),JSON.stringify(state));
+  }
+  // Clear loaded key after saving
+  if(role==='tech') tLoadedKey=null;
+  else sLoadedKey=null;
+}
+// ══ HISTORY — FETCH FROM GOOGLE SHEET ══
+
+// ── Global JSONP fetch helper ──
+function doHistFetch(url, cb){
+  var n='_bscH'+Date.now(); var done=false;
+  var sc;
+  var fin=function(d){
+    if(done)return; done=true;
+    delete window[n];
+    if(sc&&sc.parentNode) sc.parentNode.removeChild(sc);
+    cb(d);
+  };
+  window[n]=fin;
+  sc=document.createElement('script');
+  sc.src=url+(url.indexOf('?')>=0?'&':'?')+'callback='+n;
+  sc.onerror=function(){fin(null);};
+  setTimeout(function(){fin(null);},15000);
+  document.head.appendChild(sc);
+}
+
+function openHistory(role){
+  historyRole=role;
+  document.getElementById('history-title').textContent=
+    role==='tech'?'📂 Service Report History':'📂 Sales Visit History';
+  const list=document.getElementById('history-list');
+  list.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:32px 0">⏳ Loading history from Google Sheet…</p>';
+  // Always clear cache to force fresh fetch — ensures latest data after role switches
+  window._sheetRows = null;
+  window._searchCache = null;
+  // Clear search filter
+  const hsi = document.getElementById('history-search-input');
+  if(hsi) hsi.value='';
+  openModal('history-modal');
+  const gsUrl=getGsUrl();
+  const sheetTab=role==='tech'?'Reports':'Reports';
+  const histUrl=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=getHistory&sheetTab='+encodeURIComponent(sheetTab)+'&limit=60';
+  doHistFetch(histUrl, function(data){
+    if(!data||!data.rows){
+      list.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 12px">⚠️ Could not load history.<br><br><a href="'+histUrl+'&callback=test" target="_blank" style="color:#1565C0;font-size:12px;font-weight:600">🔗 Tap here to test the script</a></p>';
+      return;
+    }
+    (function(data){
+      if(!data.rows||!data.rows.length){
+        list.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:32px 0">No records found in Google Sheet.</p>';
+        return;
+      }
+      const headers=data.headers;
+      // Store rows globally so onclick can reference by index (avoids quote escaping)
+      window._sheetRows={headers:headers,rows:data.rows.slice().reverse(),role:_currentRole||role}; // newest first
+      list.innerHTML=window._sheetRows.rows.map((row,ri)=>{
+        const get=col=>{ const i=headers.indexOf(col); return i>=0?(row[i]||''):''; };
+        const clientVal=get('Dealer/Client/Contractor')||get('Customer / Company')||String(row[2]||'');
+        const area=get('Area')||String(row[8]||'');
+        const compNo=get('Complaint No')||String(row[1]||'');
+        const contactVal=get('Client Contact')||String(row[6]||'');
+        const techOrSE=get('Assigned To')||get('Technician')||get('Sales Executive')||String(row[25]||row[20]||'');
+        function fmtDisp(v){ if(!v||v==='—') return '—'; const d=new Date(v); if(isNaN(d)) return v; return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); }
+        const dateVal=fmtDisp(role==='tech'?get('Attended on'):get('Date'));
+        const status=role==='tech'?get('Status'):get('Visit Type');
+        const dept=get('Department');
+        const siVal=get('Si');
+        const title='<span style="background:#FFF9C4;color:#5D4037;padding:1px 5px;border-radius:4px;font-weight:700">'+(clientVal||'—')+'</span> · '+(area||'—');
+        const meta=(role==='tech'?'👷 ':'👤 ')+(techOrSE||'—')+' | 📅 '+(dateVal||'—')+' | '+(status||'—');
+        const SHEET_URL='https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
+        const sheetBase=LS.getItem('bsc_sheet_url')||SHEET_URL;
+        const sheetM=sheetBase.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+        const sheetId=sheetM?sheetM[1]:'';
+        const viewUrl=sheetId
+          ?'https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:html&sheet='+encodeURIComponent(sheetTab)+'&tq='+encodeURIComponent('select * where C contains \''+clientVal.replace(/'/g,"\'")+'\'')
+          :sheetBase;
+        const sheetLink=''; // View button removed
+        return '<div class="rcard" data-compno="'+(compNo||'')+'" data-contact="'+(contactVal||'')+'">'+
+          '<div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px">'+title+'</div>'+
+          '<div style="font-size:12px;color:var(--t2);margin-bottom:2px">'+meta+'</div>'+
+          '<div style="font-size:11px;color:var(--t3);margin-bottom:6px">Dept: '+(dept||'—')+(siVal?' | Si: '+siVal:'')+' | ☁️ Google Sheet</div>'+
+          '<div style="display:flex;gap:6px">'+
+            '<button onclick="loadReportFromSheet('+ri+')" style="flex:1;padding:8px;background:var(--navy);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">✏️ Load &amp; Edit</button>'+
+            sheetLink+
+            
+          '</div></div>';
+      }).join('');
+  })(data);
+  });
+}
+
+// Load a report from Google Sheet row into the form (by index into window._sheetRows)
+function loadReportFromSheet(ri, cacheOverride){
+  // Removed confirm dialog - load directly
+  const cache=cacheOverride||window._sheetRows;
+  if(!cache){toast('⚠️ Please re-open History to reload data');return;}
+  const headers=cache.headers; const row=cache.rows[ri]; const role=_currentRole||cache.role||'tech';
+
+  const get=col=>{ const i=headers.indexOf(col); return i>=0?(row[i]!=null?String(row[i]):''):''; };
+
+  // Convert ISO/various date → yyyy-mm-dd using LOCAL timezone (handles Bahrain UTC+3)
+  function toDateInput(v){
+    if(!v) return '';
+    const s=String(v).trim();
+    if(!s || s==='0') return '';
+    // Already yyyy-mm-dd
+    if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    // dd/mm/yyyy or dd.mm.yyyy → convert to yyyy-mm-dd
+    const dmy=s.match(/^(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})$/);
+    if(dmy) return dmy[3]+'-'+dmy[2].padStart(2,'0')+'-'+dmy[1].padStart(2,'0');
+    // ISO datetime string — use JS Date with LOCAL methods to handle timezone
+    if(s.includes('T')){
+      const d=new Date(s);
+      if(!isNaN(d)){
+        const y=d.getFullYear();
+        const m=String(d.getMonth()+1).padStart(2,'0');
+        const day=String(d.getDate()).padStart(2,'0');
+        // Sanity check - year must be reasonable
+        if(y>1970 && y<2100) return y+'-'+m+'-'+day;
+      }
+    }
+    return '';
+  }
+
+  // Convert ISO time → HH:MM using LOCAL timezone (handles Bahrain UTC+3)
+  function toTimeInput(v){
+    if(!v) return '';
+    const s=String(v).trim();
+    if(!s || s==='0') return '';
+    // Already HH:MM
+    if(/^\d{1,2}:\d{2}$/.test(s)) return s.padStart(5,'0');
+    // ISO datetime — use LOCAL hours/minutes
+    if(s.includes('T')){
+      const d=new Date(s);
+      if(!isNaN(d)){
+        const h=String(d.getHours()).padStart(2,'0');
+        const min=String(d.getMinutes()).padStart(2,'0');
+        return h+':'+min;
+      }
+    }
+    return '';
+  }
+
+  if(role==='tech'){
+    // Silent reset — don't call initTech() so today's date doesn't overwrite sheet dates
+    tLoadedKey=null;
+    const siHiddenClear=document.getElementById('t-si-hidden'); if(siHiddenClear) siHiddenClear.value='';
+    document.querySelectorAll('#screen-tech input[type=text],#screen-tech input[type=number],#screen-tech input[type=tel],#screen-tech textarea,#screen-tech input[type=date],#screen-tech input[type=time]').forEach(el=>{
+      if(el.id==='t-qty') el.value='1'; else el.value='';
+    });
+    document.querySelectorAll('#screen-tech select').forEach(el=>{
+      if(el.id !== 't-tech') el.selectedIndex=0; // don't reset tech select
+    });
+    document.querySelectorAll('.part.on').forEach(el=>el.classList.remove('on'));
+    document.querySelectorAll('.part-qty').forEach(el=>{el.style.display='none';el.value='';});
+    if(document.getElementById('part-others')) document.getElementById('part-others').classList.remove('on');
+    if(document.getElementById('others-remark-wrap')) document.getElementById('others-remark-wrap').style.display='none';
+    document.querySelectorAll('.st').forEach(b=>b.className='st');
+    tSelStatus='';
+    document.getElementById('t-replaced-req').style.display='none';
+    document.getElementById('t-nature-other-wrap').style.display='none';
+    // Now populate from sheet data (300ms to ensure DOM is ready)
+    setTimeout(()=>{
+      // Text & number fields
+      const fmap={
+        't-complaint-no': get('Complaint No'),
+        't-assigned-to':  String(row[25]||'').trim(), // Assigned To from sheet
+        't-se':           get('Submitted by'),
+        't-month':        get('Month'),
+        't-date':         toDateInput(get('Complaint Received Date')),
+        't-date-time':    toTimeInput(get('Complaint Received Time')),
+        't-attended':     toDateInput(get('Attended on')),
+        't-attended-time':toTimeInput(get('Complaint Attended Time')),
+        't-dealer':       get('Dealer/Client/Contractor'),
+        't-house':        get('House'),
+        't-road':         get('Road'),
+        't-block':        get('Block'),
+        't-area':         get('Area'),
+        't-dept':         get('Department'),
+        't-pcode':        get('Product Code'),
+        't-pdesc':        get('Product Description'),
+        't-qty':          get('Qty.'),
+        't-serial':       get('Serial No.'),
+        't-mfg':          get('MFG Year'),
+        't-dop':          toDateInput(get('Date of Purchasing')),
+        't-remark':       get('Remark'),
+        't-replaced':     get('Replaced Unit'),
+      };
+      Object.entries(fmap).forEach(([id,val])=>{
+        const el=document.getElementById(id);
+        if(!el||!val) return;
+        const wasLocked=el.getAttribute('data-role-locked');
+        if(wasLocked) el.removeAttribute('data-role-locked');
+        el.value=String(val).trim();
+        if(el.tagName==='SELECT'){
+          if(!el.value){
+            const vl=String(val).trim().toLowerCase();
+            Array.from(el.options).forEach(o=>{
+              if(o.text.trim().toLowerCase()===vl||o.value.trim().toLowerCase()===vl) el.value=o.value;
+            });
+          }
+          if(!el.value && String(val).trim()){
+            const dOpt=document.createElement('option');
+            dOpt.value=String(val).trim(); dOpt.text=String(val).trim();
+            el.insertBefore(dOpt, el.options[1]||null);
+            el.value=String(val).trim();
+          }
+        }
+        if(wasLocked){ el.setAttribute('data-role-locked','true'); el.style.opacity='0.6'; el.style.pointerEvents='none'; el.style.background='#F5F5F5'; }
+      });
+      // Read 'Assigned To' from sheet → set into t-tech SELECT
+      // Assigned To populated via fmap above
+
+      // Contact — stored clean e.g. "38887563 / 39123456"
+      const cd=get('Client Contact');
+      if(cd){
+        const cparts=cd.split(' / ');
+        const c1=document.getElementById('t-contact1');
+        const c2=document.getElementById('t-contact2');
+        if(c1) c1.value=(cparts[0]||'').trim();
+        if(c2) c2.value=(cparts[1]||'').trim();
+      }
+
+      // Nature of complaint
+      const natEl=document.getElementById('t-nature');
+      const natVal=get('Nature of complaint');
+      if(natEl&&natVal){
+        // Set value and trigger change
+        natEl.value=natVal;
+        if(!natEl.value) {
+          // Try to find matching option
+          Array.from(natEl.options).forEach(o=>{
+            if(o.text.toLowerCase()===natVal.toLowerCase()) natEl.value=o.value;
+          });
+        }
+        tToggleNatureOther();
+      }
+
+      // Status buttons
+      const stVal=get('Status');
+      if(stVal){
+        tSelStatus=stVal;
+        const stdVals=['Repair','Replacement','Warranty void','No problem in heater'];
+        let matched=false;
+        document.querySelectorAll('.st').forEach(b=>{
+          b.classList.remove('on-repair','on-replace','on-void','on-noproblem');
+          const lbl=b.textContent.trim();
+          if(lbl.includes('Repair')&&stVal==='Repair'){            b.classList.add('on-repair');matched=true;}
+          else if(lbl.includes('Replace')&&stVal==='Replacement'){ b.classList.add('on-replace');matched=true;}
+          else if(lbl.includes('Void')&&stVal==='Warranty void'){  b.classList.add('on-void');matched=true;}
+          else if(lbl.includes('Problem')&&stVal==='No problem in heater'){b.classList.add('on-noproblem');matched=true;}
+        });
+        // Custom status
+        if(!matched){
+          const sc=document.getElementById('t-status-custom');
+          if(sc) sc.value=stVal;
+        }
+        const replReq=document.getElementById('t-replaced-req');
+        if(replReq) replReq.style.display=stVal==='Replacement'?'inline':'none';
+      }
+
+      tUpdateMfgRequired();
+
+      // Restore spare parts — all 41 parts mapped correctly
+      (function(){
+        const qty=get('Element');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Element"]');
+          const qEl=document.getElementById('q-Element');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Thermostat');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Thermostat"]');
+          const qEl=document.getElementById('q-Thermostat');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Bottom Plastic Lid Cover');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="BottomLidCover"]');
+          const qEl=document.getElementById('q-BottomLidCover');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('O Ring');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="ORing"]');
+          const qEl=document.getElementById('q-ORing');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Impellor');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Impellor"]');
+          const qEl=document.getElementById('q-Impellor');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Bearing');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Bearing"]');
+          const qEl=document.getElementById('q-Bearing');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Down Safety Valve/BSV');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="BSV"]');
+          const qEl=document.getElementById('q-BSV');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Mechanical Seal');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="MechSeal"]');
+          const qEl=document.getElementById('q-MechSeal');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Capacitor');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Capacitor"]');
+          const qEl=document.getElementById('q-Capacitor');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Top Safety Valve');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="TSV"]');
+          const qEl=document.getElementById('q-TSV');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Lamp Indicator');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="LampIndicator"]');
+          const qEl=document.getElementById('q-LampIndicator');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Front Body');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="FrontBody"]');
+          const qEl=document.getElementById('q-FrontBody');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Impellor Back Body');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="ImpellorBackBody"]');
+          const qEl=document.getElementById('q-ImpellorBackBody');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Front Cover');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="FrontCover"]');
+          const qEl=document.getElementById('q-FrontCover');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Terminal');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Terminal"]');
+          const qEl=document.getElementById('q-Terminal');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Winding Base');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="WindingBase"]');
+          const qEl=document.getElementById('q-WindingBase');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Wire & legs');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="WireLegs"]');
+          const qEl=document.getElementById('q-WireLegs');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Shaft');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Shaft"]');
+          const qEl=document.getElementById('q-Shaft');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Supply Power Connector');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="PowerConnector"]');
+          const qEl=document.getElementById('q-PowerConnector');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Cover Plate');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="CoverPlate"]');
+          const qEl=document.getElementById('q-CoverPlate');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Fan');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Fan"]');
+          const qEl=document.getElementById('q-Fan');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Fan Cover');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="FanCover"]');
+          const qEl=document.getElementById('q-FanCover');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Top Cover');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="TopCover"]');
+          const qEl=document.getElementById('q-TopCover');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Flexible Hose');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="FlexibleHose"]');
+          const qEl=document.getElementById('q-FlexibleHose');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Front Casing');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="FrontCasing"]');
+          const qEl=document.getElementById('q-FrontCasing');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Anod');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Anod"]');
+          const qEl=document.getElementById('q-Anod');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Thermo metre Gauge');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="ThermoGauge"]');
+          const qEl=document.getElementById('q-ThermoGauge');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Filter');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Filter"]');
+          const qEl=document.getElementById('q-Filter');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Hook');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Hook"]');
+          const qEl=document.getElementById('q-Hook');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Rubber Gasket');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="RubberGasket"]');
+          const qEl=document.getElementById('q-RubberGasket');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Stator');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Stator"]');
+          const qEl=document.getElementById('q-Stator');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Teflon Washer');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="TeflonWasher"]');
+          const qEl=document.getElementById('q-TeflonWasher');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Flange');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Flange"]');
+          const qEl=document.getElementById('q-Flange');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Blade/Brush');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="BladeBrush"]');
+          const qEl=document.getElementById('q-BladeBrush');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Knob');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Knob"]');
+          const qEl=document.getElementById('q-Knob');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Bowl');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Bowl"]');
+          const qEl=document.getElementById('q-Bowl');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Gasket');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Gasket"]');
+          const qEl=document.getElementById('q-Gasket');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Socket');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Socket"]');
+          const qEl=document.getElementById('q-Socket');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Bolt');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Bolt"]');
+          const qEl=document.getElementById('q-Bolt');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Wall Support gasket');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="WallGasket"]');
+          const qEl=document.getElementById('q-WallGasket');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      (function(){
+        const qty=get('Motor');
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="Motor"]');
+          const qEl=document.getElementById('q-Motor');
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      })();
+      // Restore Others Parts
+      (function(){
+        const othersVal=get('Others Parts');
+        if(othersVal&&String(othersVal).trim()!==''){
+          const btn=document.getElementById('part-others');
+          const wrap=document.getElementById('others-remark-wrap');
+          const ta=document.getElementById('t-others-remark');
+          if(btn){btn.classList.add('on');}
+          if(wrap){wrap.style.display='block';}
+          if(ta){ta.value=othersVal;}
+        }
+      })();
+    },250); // close setTimeout tech branch
+
+  } else {
+    // ── Coordinator / Sales loading from history ──
+    // Silent reset
+    document.querySelectorAll('#screen-tech input[type=text],#screen-tech input[type=number],#screen-tech input[type=tel],#screen-tech textarea,#screen-tech input[type=date],#screen-tech input[type=time]').forEach(el=>{
+      if(el.id==='t-qty') el.value='1'; else el.value='';
+    });
+    document.querySelectorAll('#screen-tech select').forEach(el=>{
+      if(el.id !== 't-tech') el.selectedIndex=0; // don't reset tech select
+    });
+    document.querySelectorAll('.part.on').forEach(el=>el.classList.remove('on'));
+    document.querySelectorAll('.part-qty').forEach(el=>{el.style.display='none';el.value='';});
+    if(document.getElementById('part-others')) document.getElementById('part-others').classList.remove('on');
+    if(document.getElementById('others-remark-wrap')) document.getElementById('others-remark-wrap').style.display='none';
+
+    setTimeout(()=>{
+      const fmap2={
+        't-complaint-no': get('Complaint No'),
+        't-dept':         get('Department'),
+        't-date':         toDateInput(get('Complaint Received Date')),
+        't-date-time':    toTimeInput(get('Complaint Received Time')),
+        't-attended':     toDateInput(get('Attended on')),
+        't-attended-time':toTimeInput(get('Complaint Attended Time')),
+        't-assigned-to':  String(row[25]||'').trim(), // Assigned To from sheet
+        't-se':           get('Submitted by'),
+        't-month':        get('Month'),
+        't-dealer':       get('Dealer/Client/Contractor'),
+        't-house':        get('House'),
+        't-road':         get('Road'),
+        't-block':        get('Block'),
+        't-area':         get('Area'),
+        't-pcode':        get('Product Code'),
+        't-pdesc':        get('Product Description'),
+        't-qty':          get('Qty.'),
+        't-serial':       get('Serial No.'),
+        't-mfg':          get('MFG Year'),
+        't-dop':          toDateInput(get('Date of Purchasing')),
+        't-remark':       get('Remark'),
+        't-replaced':     get('Replaced Unit'),
+        't-assigned-to':  get('Assigned To'),
+      };
+      Object.entries(fmap2).forEach(([id,val])=>{
+        const el=document.getElementById(id);
+        if(!el||!val) return;
+        const wasLocked=el.getAttribute('data-role-locked');
+        if(wasLocked) el.removeAttribute('data-role-locked');
+        el.value=String(val).trim();
+        if(el.tagName==='SELECT'){
+          if(!el.value){
+            const vl=String(val).trim().toLowerCase();
+            Array.from(el.options).forEach(o=>{
+              if(o.text.trim().toLowerCase()===vl||o.value.trim().toLowerCase()===vl) el.value=o.value;
+            });
+          }
+          if(!el.value && String(val).trim()){
+            const dOpt=document.createElement('option');
+            dOpt.value=String(val).trim(); dOpt.text=String(val).trim();
+            el.insertBefore(dOpt, el.options[1]||null);
+            el.value=String(val).trim();
+          }
+        }
+        if(wasLocked){ el.setAttribute('data-role-locked','true'); el.style.opacity='0.6'; el.style.pointerEvents='none'; el.style.background='#F5F5F5'; }
+      });
+      // Force-set t-tech in else branch
+      const finalTech2=(get('Assigned To')||get('Technician')||'').trim();
+      if(finalTech2){
+        const techEl3=document.getElementById('t-tech');
+        if(techEl3){
+          techEl3.value=finalTech2;
+          if(!techEl3.value){
+            Array.from(techEl3.options).forEach(o=>{
+              if(o.text.trim().toLowerCase()===finalTech2.toLowerCase()) techEl3.value=o.value;
+            });
+          }
+          if(!techEl3.value){
+            const newOpt=document.createElement('option');
+            newOpt.value=finalTech2; newOpt.text=finalTech2;
+            techEl3.appendChild(newOpt);
+            techEl3.value=finalTech2;
+          }
+        }
+      }
+      // Contacts
+      const cd2=get('Client Contact');
+      if(cd2){ const pts=cd2.split(' / ');
+        const c1=document.getElementById('t-contact1'); const c2=document.getElementById('t-contact2');
+        if(c1) c1.value=(pts[0]||'').trim(); if(c2) c2.value=(pts[1]||'').trim();
+      }
+      // Nature of complaint
+      const natEl2=document.getElementById('t-nature');
+      const natVal2=get('Nature of complaint');
+      if(natEl2&&natVal2){ natEl2.value=natVal2; if(typeof tToggleNatureOther==='function') tToggleNatureOther(); }
+      // Status
+      const stVal2=get('Status');
+      if(stVal2){ tSelStatus=stVal2;
+        document.querySelectorAll('.st').forEach(b=>{
+          b.classList.remove('on-repair','on-replace','on-void','on-noproblem');
+          const lbl=b.textContent.trim();
+          if(lbl.includes('Repair')&&stVal2==='Repair') b.classList.add('on-repair');
+          else if(lbl.includes('Replace')&&stVal2==='Replacement') b.classList.add('on-replace');
+          else if(lbl.includes('Void')&&stVal2==='Warranty void') b.classList.add('on-void');
+          else if(lbl.includes('Problem')&&stVal2==='No problem in heater') b.classList.add('on-noproblem');
+        });
+      }
+      // Spare parts — same mapping as tech branch
+      const PART_MAP2=[
+        ['Element','Element'],['Thermostat','Thermostat'],
+        ['Bottom Plastic Lid Cover','BottomLidCover'],['O Ring','ORing'],
+        ['Impellor','Impellor'],['Bearing','Bearing'],
+        ['Down Safety Valve/BSV','BSV'],['Mechanical Seal','MechSeal'],
+        ['Capacitor','Capacitor'],['Top Safety Valve','TSV'],
+        ['Lamp Indicator','LampIndicator'],['Front Body','FrontBody'],
+        ['Impellor Back Body','ImpellorBackBody'],['Front Cover','FrontCover'],
+        ['Terminal','Terminal'],['Winding Base','WindingBase'],
+        ['Wire & legs','WireLegs'],['Shaft','Shaft'],
+        ['Supply Power Connector','PowerConnector'],['Cover Plate','CoverPlate'],
+        ['Fan','Fan'],['Fan Cover','FanCover'],['Top Cover','TopCover'],
+        ['Flexible Hose','FlexibleHose'],['Front Casing','FrontCasing'],
+        ['Anod','Anod'],['Thermo metre Gauge','ThermoGauge'],
+        ['Filter','Filter'],['Hook','Hook'],['Rubber Gasket','RubberGasket'],
+        ['Stator','Stator'],['Teflon Washer','TeflonWasher'],['Flange','Flange'],
+        ['Blade/Brush','BladeBrush'],['Knob','Knob'],['Bowl','Bowl'],
+        ['Gasket','Gasket'],['Socket','Socket'],['Bolt','Bolt'],
+        ['Wall Support gasket','WallGasket'],['Motor','Motor']
+      ];
+      PART_MAP2.forEach(([header,key])=>{
+        const qty=get(header);
+        if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
+          const btn=document.querySelector('.part[data-k="'+key+'"]');
+          const qEl=document.getElementById('q-'+key);
+          if(btn){btn.classList.add('on');if(qEl){qEl.style.display='';qEl.value=qty;}}
+        }
+      });
+      // Others Parts
+      const othersVal2=get('Others Parts');
+      if(othersVal2&&String(othersVal2).trim()!==''){
+        const btn=document.getElementById('part-others');
+        const wrap=document.getElementById('others-remark-wrap');
+        const ta=document.getElementById('t-others-remark');
+        if(btn) btn.classList.add('on');
+        if(wrap) wrap.style.display='block';
+        if(ta) ta.value=othersVal2;
+      }
+      // Workflow status
+      _wfStatus=get('Workflow Status')||'Pending';
+      // Track for update
+      const loadedSi3=get('Si');
+      const siH3=document.getElementById('t-si-hidden');
+      if(siH3) siH3.value=loadedSi3||'';
+      tLoadedKey='__sheet__'+loadedSi3;
+      const loadedCN3=get('Complaint No');
+      window._editingRow={si:loadedSi3,complaintNo:loadedCN3,dealer:get('Dealer/Client/Contractor'),attendedOn:get('Attended on'),tech:get('Technician')};
+      if(!window._savedComplaints) window._savedComplaints={};
+      if(loadedCN3) window._savedComplaints[loadedCN3+'_'+_currentRole]=true;
+      const bn2=document.getElementById('edit-banner-tech');
+      if(bn2){bn2.style.display='flex';document.getElementById('edit-banner-tech-name').textContent=get('Dealer/Client/Contractor')||'report';}
+    },250); // close setTimeout coord/sales branch
+  }
+
+  toast('✅ Loaded — edit and re-save to update');
+  window.scrollTo(0,0);
+}
+
+// ══ WORKFLOW — ROLE MANAGEMENT ══
+var _currentRole = 'tech';
+var _wfStatus = 'Pending';
+
+var ROLE_CONFIG = {
+  sales: {
+    label: '📞 Sales Team', topbar: '📞 Sales Team', wfStatus: 'Pending', step: 1,
+    lockedCards: [], hiddenCards: ['spare-parts-card','complaint-work-card'],
+    hiddenFields: ['tech-select-field','assigned-to-field'], lockedFields: [],
+    showAssigned: false, btnBar: 'abar-sales', color: '#2E7D32'
+  },
+  coord: {
+    label: '🗂️ Coordinator', topbar: '🗂️ Sales Coordinator', wfStatus: 'Assigned', step: 2,
+    lockedCards: [], hiddenCards: [],
+    hiddenFields: ['tech-select-field'], lockedFields: [],
+    showAssigned: true, btnBar: 'abar-coord', color: '#7B1FA2'
+  },
+  tech: {
+    label: '👷 Technician', topbar: '👷 Technician', wfStatus: 'Completed', step: 3,
+    lockedCards: ['technician-card','client-card'], hiddenCards: [],
+    hiddenFields: ['tech-select-field'],
+    lockedFields: ['t-complaint-no','t-dept','t-date','t-date-time','t-se','t-month','t-assigned-to'],
+    showAssigned: true, btnBar: 'abar-tech', color: '#1565C0'
+  }
+};
+
+function enterRole(role){
+  bscStorageNotice();
+  _currentRole = role;
+  _wfStatus = ROLE_CONFIG[role].wfStatus;
+  // Clear sheet cache on role switch — ensures fresh data for each role
+  window._sheetRows = null;
+  window._searchCache = null;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-tech').classList.add('active');
+  applyRoleUI(role);
+  initTech();
+  if(role==='sales') generateComplaintNo();
+  window.scrollTo(0,0);
+}
+
+function applyRoleUI(role){
+  const cfg = ROLE_CONFIG[role];
+  const lbl=document.getElementById('tb-role-label');
+  if(lbl) lbl.textContent=cfg.topbar+' · Bukamal';
+  const tb=document.querySelector('#screen-tech .topbar');
+  if(tb) tb.style.background='linear-gradient(135deg,'+cfg.color+'dd,'+cfg.color+')';
+  const wb=document.getElementById('workflow-bar');
+  if(wb){
+    wb.style.display='block';
+    ['wf-step1','wf-step2','wf-step3'].forEach((id,i)=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      if(i+1<cfg.step){el.style.background='#2E7D32';el.style.color='#fff';}
+      else if(i+1===cfg.step){el.style.background=cfg.color;el.style.color='#fff';}
+      else{el.style.background='#BDBDBD';el.style.color='#fff';}
+    });
+    const rl=document.getElementById('wf-role-label');
+    if(rl) rl.textContent='You are logged in as: '+cfg.label;
+  }
+  ['abar-sales','abar-coord','abar-tech'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=id===cfg.btnBar?'flex':'none';
+  });
+  const atf=document.getElementById('assigned-to-field');
+  if(atf) atf.style.display=cfg.showAssigned?'':'none';
+  ['tech-select-field'].forEach(fid=>{
+    const el=document.getElementById(fid);
+    if(!el) return;
+    el.style.display=(cfg.hiddenFields||[]).includes(fid)?'none':'';
+  });
+  document.querySelectorAll('.card[data-card]').forEach(card=>{
+    const cardId=card.getAttribute('data-card');
+    card.style.display=(cfg.hiddenCards||[]).includes(cardId)?'none':'';
+    card.classList.toggle('section-locked',(cfg.lockedCards||[]).includes(cardId));
+  });
+  document.querySelectorAll('#screen-tech input,#screen-tech select,#screen-tech textarea').forEach(el=>{
+    el.removeAttribute('data-role-locked');
+    el.style.opacity='';el.style.pointerEvents='';el.style.background='';
+  });
+  (cfg.lockedFields||[]).forEach(fid=>{
+    const el=document.getElementById(fid);
+    if(!el) return;
+    el.setAttribute('data-role-locked','true');
+    el.style.opacity='0.6';el.style.pointerEvents='none';el.style.background='#F5F5F5';
+  });
+
+
+  const techHeading=document.querySelector('.card[data-card="technician-card"] h2')||document.querySelector('#screen-tech .card-head h2');
+  if(techHeading){
+    const roleNames={sales:'Sales Team',coord:'Coordinator',tech:'Technician'};
+    const icons={sales:'📞',coord:'🗂️',tech:'👷'};
+    techHeading.textContent=roleNames[role]||role;
+    const icon=techHeading.previousElementSibling;
+    if(icon&&icon.classList.contains('icon')) icon.textContent=icons[role]||'👷';
+  }
+}
+
+async function wfSave(role){
+  if(!tValidate()) return;
+  _wfStatus=ROLE_CONFIG[role].wfStatus;
+  if(role==='coord'){
+    const tech=document.getElementById('t-assigned-to').value;
+    if(!tech){toast('⚠️ Please select a technician to assign');return;}
+  }
+  // Coordinator: WA only when user taps WhatsApp button, not on Assign
+  // Sales: no WhatsApp on Submit — WA only when user taps WhatsApp button
+  await tSaveToSheets();
+  setTimeout(function(){window._bscSaving=false;},3000);
+}
+
+function goLogin(){
+  _currentRole='tech';_wfStatus='Pending';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-login').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function generateComplaintNo(){
+  const el=document.getElementById('t-complaint-no');
+  if(!el) return;
+  el.value='⏳ Generating…';
+  const gsUrl=getGsUrl();
+  const cbName='_bscCN'+Date.now();
+  let done=false;
+  let sc;
+  const finish=function(data){
+    if(done) return;done=true;
+    delete window[cbName];
+    if(sc&&sc.parentNode) sc.remove();
+    let nextNum=1;
+    if(data&&data.rows) nextNum=data.rows.length+1;
+    const num=String(nextNum).padStart(4,'0');
+    el.value='CIS-'+num;
+    toast('📋 Complaint No: CIS-'+num);
+  };
+  window[cbName]=finish;
+  sc=document.createElement('script');
+  sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=getHistory&sheetTab=Reports&limit=60&callback='+cbName;
+  sc.onerror=function(){
+    const now=new Date();
+    const ts=now.getFullYear().toString().slice(2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+    el.value='CIS-'+ts;finish(null);
+  };
+  setTimeout(function(){finish(null);},10000);
+  document.head.appendChild(sc);
+}
+// ══ SEARCH ══
+var _searchCache = null;
+
+function openSearch(){
+  openModal('search-modal');
+  const inp = document.getElementById('search-input');
+  if(inp){ inp.value=''; }
+  const res = document.getElementById('search-results');
+  if(res) res.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">⏳ Loading…</p>';
+
+  // Always fetch fresh data independently — no dependency on History
+  const gsUrl = getGsUrl();
+  const histUrl = gsUrl+(gsUrl.includes('?')?'&':'?')+'action=getHistory&sheetTab=Reports&limit=60';
+  doHistFetch(histUrl, function(data){
+    if(data && data.rows && data.rows.length){
+      _searchCache = {headers: data.headers, rows: data.rows.slice().reverse()};
+      if(res) res.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">✅ '+data.rows.length+' records loaded — type to search.</p>';
+    } else {
+      // Fallback to _sheetRows if fetch fails
+      if(window._sheetRows && window._sheetRows.rows && window._sheetRows.rows.length){
+        _searchCache = window._sheetRows;
+        if(res) res.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">✅ Ready — type to search.</p>';
+      } else {
+        if(res) res.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">⚠️ Could not load. Check internet connection.</p>';
+      }
+    }
+  });
+  if(inp) setTimeout(()=>inp.focus(), 300);
+}
+
+function runSearch(q){
+  q = (q||'').trim().toLowerCase();
+  const res = document.getElementById('search-results');
+  if(!q){
+    res.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">Type a complaint no, client name or contact to search.</p>';
+    return;
+  }
+  if(!_searchCache || !_searchCache.rows || !_searchCache.rows.length){
+    res.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">⏳ Still loading — please wait a moment…</p>';
+    return;
+  }
+  const headers = _searchCache.headers;
+  const rows = _searchCache.rows.slice(); // already newest first from cache
+  const dealerIdx   = headers.indexOf('Dealer/Client/Contractor');
+  const clientIdx   = headers.indexOf('Client Contact');
+  const compNoIdx   = headers.indexOf('Complaint No');
+  const techIdx     = headers.indexOf('Technician');
+  const dateIdx     = headers.indexOf('Complaint Received Date');
+  const statusIdx   = headers.indexOf('Status');
+  const areaIdx     = headers.indexOf('Area');
+  const siIdx       = headers.indexOf('Si');
+  const wfIdx       = headers.indexOf('Workflow Status');
+
+  const matched = rows.map((row,ri)=>({row,ri})).filter(({row})=>{
+    const dealer  = String(row[dealerIdx]||'').toLowerCase();
+    const contact = String(row[clientIdx]||'').toLowerCase();
+    const compNo  = String(row[compNoIdx]||'').toLowerCase();
+    return dealer.includes(q)||contact.includes(q)||compNo.includes(q);
+  });
+
+  if(!matched.length){
+    res.innerHTML='<p style="font-size:13px;color:var(--t3);text-align:center;padding:24px 0">No results found for "'+q+'"</p>';
+    return;
+  }
+
+  function hl(txt){
+    if(!txt) return '—';
+    const s=String(txt);
+    const re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+    return s.replace(re,'<mark style="background:#FFF59D;padding:0 1px">$1</mark>');
+  }
+  function fmtD(v){ if(!v) return '—'; const d=new Date(v); if(isNaN(d)) return v; return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); }
+
+  res.innerHTML = matched.map(({row,ri})=>{
+    const dealer  = row[dealerIdx]||'—';
+    const contact = row[clientIdx]||'—';
+    const compNo  = row[compNoIdx]||'';
+    const tech    = row[techIdx]  ||'—';
+    const date    = fmtD(row[dateIdx]||'');
+    const status  = row[statusIdx]||'—';
+    const area    = row[areaIdx]  ||'—';
+    const si      = row[siIdx]    ||'';
+    const wfStatus= row[wfIdx]    ||'';
+    const wfColors={Pending:'#FFF3E0',Assigned:'#E3F2FD',Completed:'#E8F5E9'};
+    const wfBg=wfColors[wfStatus]||'#F5F5F5';
+    return '<div class="rcard">'+
+      '<div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px">'+
+        '<span style="background:#FFF9C4;color:#5D4037;padding:1px 5px;border-radius:4px">'+hl(dealer)+'</span>'+
+        (compNo?'<span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:4px;font-size:11px;margin-left:5px">'+hl(compNo)+'</span>':'')+
+        ' · '+area+
+      '</div>'+
+      '<div style="font-size:12px;color:var(--t2);margin-bottom:2px">📞 '+hl(contact)+'</div>'+
+      '<div style="font-size:11px;color:var(--t3);margin-bottom:6px">👷 '+tech+' · 📅 '+date+' · <span style="background:'+wfBg+';padding:1px 6px;border-radius:10px;font-size:10px">'+wfStatus+'</span></div>'+
+      '<button onclick="loadFromSearch('+ri+')" style="width:100%;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">✏️ Load & Edit</button>'+
+    '</div>';
+  }).join('');
+}
+
+function loadFromSearch(ri){
+  // Pass search cache directly — no dependency on _sheetRows
+  if(window._searchCache && window._searchCache.rows){
+    const searchCache = {
+      headers: window._searchCache.headers,
+      rows: window._searchCache.rows,
+      role: _currentRole
+    };
+    loadReportFromSheet(ri, searchCache);
+  } else {
+    toast('⚠️ Search data not loaded. Please wait and try again.');
+  }
+}
+
+// Filter history list client-side — searches loaded cards
+function filterHistory(q){
+  q = (q||'').trim().toLowerCase();
+  const list = document.getElementById('history-list');
+  if(!list) return;
+  const cards = list.querySelectorAll('.rcard');
+  if(!q){
+    cards.forEach(c=>c.style.display='');
+    return;
+  }
+  cards.forEach(c=>{
+    // Search textContent + data-search + data-compno + data-contact
+    const txt = c.textContent.toLowerCase();
+    const dataSearch = (c.getAttribute('data-search')||'').toLowerCase();
+    const compNo = (c.getAttribute('data-compno')||'').toLowerCase();
+    const contact = (c.getAttribute('data-contact')||'').toLowerCase();
+    c.style.display = (txt.includes(q)||dataSearch.includes(q)||compNo.includes(q)||contact.includes(q)) ? '' : 'none';
+  });
+  // Count visible
+  const visible = Array.from(cards).filter(c=>c.style.display!=='none').length;
+  const noResult = list.querySelector('.filter-no-result');
+  if(visible===0){
+    if(!noResult){
+      const p = document.createElement('p');
+      p.className='filter-no-result';
+      p.style.cssText='font-size:13px;color:var(--t3);text-align:center;padding:16px 0';
+      p.textContent='No results for "'+q+'"';
+      list.appendChild(p);
+    }
+  } else {
+    if(noResult) noResult.remove();
+  }
+}
+
+// Handle OTHER option in datalist fields — clear and allow free typing
+function tHandleOther(el, listId){
+  if(el.value.trim().toUpperCase()==='OTHER'){
+    el.value='';
+    el.removeAttribute('list');
+    el.placeholder='Type manually…';
+    el.focus();
+  } else if(!el.getAttribute('list') && el.value.trim()===''){
+    // Restore datalist when field is cleared
+    el.setAttribute('list', listId);
+    el.placeholder = listId==='t-area-list'?'Select area…':'Type client name…';
+  }
+}
+
+</script>
+</body>
+</html>
