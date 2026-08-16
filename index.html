@@ -317,8 +317,12 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
     <div class="card-body">
       <div class="row2">
         <div class="field">
-          <label>Product Code</label>
-          <input type="text" id="t-pcode" list="t-pcode-list" placeholder="Code…" oninput="tSmartFill()" autocomplete="off">
+          <label>Product Code
+            <button type="button" id="pcode-other-btn" onclick="tPcodeOther()" style="margin-left:6px;padding:1px 8px;font-size:11px;background:#F5F5F5;border:1px solid #DDD;border-radius:4px;cursor:pointer;color:#555;font-family:Inter,sans-serif">+ OTHER</button>
+            <button type="button" id="pcode-reset-btn" onclick="tPcodeReset()" style="display:none;margin-left:6px;padding:1px 8px;font-size:11px;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:4px;cursor:pointer;color:#C62828;font-family:Inter,sans-serif">✕ Back to list</button>
+          </label>
+          <input type="text" id="t-pcode" list="t-pcode-list" placeholder="Code…" oninput="tSmartFill()" onchange="tSmartFill()" autocomplete="off">
+          <input type="text" id="t-pcode-manual" placeholder="Type product code manually…" style="display:none" autocomplete="off">
           <datalist id="t-pcode-list">
             <option value="ELWH001">W.HEATER 50 LTR AQUA HOT VERTICAL</option>
             <option value="ELWH002">W.HEATER 80 LTR AQUA HOT VERTICAL</option>
@@ -372,7 +376,6 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
             <option value="MAWP219">PEDROLLO EL W. PUMP HF 5B 240/415V 50Hz</option>
             <option value="MAWP220">PEDROLLO EL.W.PUMP FUTURE JETm 1A-ST</option>
             <option value="MAWP222">ELECTRIC WATER PUMP VX 20/50-ST 415V 50Hz 10m</option>
-            <option value="OTHER">OTHER — Enter manually</option>
           </datalist>
         </div>
         <div class="field"><label>Qty.</label><input type="number" id="t-qty" value="1" min="1"></div>
@@ -745,7 +748,7 @@ Object.entries(PRODUCTS).forEach(([k,v])=>{ DESC_TO_CODE[v.toLowerCase()]=k; });
 // ══ FORCE URL UPDATE ══
 (function(){
   try{
-  const forced='https://script.google.com/macros/s/AKfycbyUfWTvPXVdvA-t9d7v1CRv9HzXyU2G1NsGCOlDlu4bUh_N3L8CnTmHErXUMv7Y6DF5/exec';
+  const forced='https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
   const saved=LS.getItem('bsc_gs_url');
   // Always overwrite if saved URL is different from the current hardcoded one
   if(saved !== forced) LS.setItem('bsc_gs_url', forced);
@@ -768,7 +771,7 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3800);
 }
 function getGsUrl(){
-  return LS.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbyUfWTvPXVdvA-t9d7v1CRv9HzXyU2G1NsGCOlDlu4bUh_N3L8CnTmHErXUMv7Y6DF5/exec';
+  return LS.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
 }
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
@@ -798,9 +801,12 @@ function goLogin(){
   window.scrollTo(0,0);
 }
 
+//
+
+
 // ══ SETTINGS ══
 function openSettings(){
-  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbyUfWTvPXVdvA-t9d7v1CRv9HzXyU2G1NsGCOlDlu4bUh_N3L8CnTmHErXUMv7Y6DF5/exec';
+  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
   document.getElementById('settings-sheet-url').value=LS.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
   openModal('settings-modal');
 }
@@ -839,22 +845,12 @@ function tSmartFill(){
   const raw=document.getElementById('t-pcode').value.trim();
   const upper=raw.toUpperCase();
   const pdescEl=document.getElementById('t-pdesc');
-  // OTHER: clear both fields so user can type code and description freely
-  if(upper==='OTHER'){
-    const pcodeEl=document.getElementById('t-pcode');
-    pcodeEl.value='';           // clear so user types their own code
-    pcodeEl.removeAttribute('list'); // detach datalist so no suggestions interfere
-    pcodeEl.placeholder='Type product code…';
-    pdescEl.value='';
-    pdescEl.readOnly=false;
-    pdescEl.style.background='';
-    pdescEl.placeholder='Type product description…';
-    pcodeEl.focus();
-    return;
+  const pcodeEl=document.getElementById('t-pcode');
+  // Restore datalist if removed
+  if(!pcodeEl.getAttribute('list')){
+    pcodeEl.setAttribute('list','t-pcode-list');
+    pcodeEl.placeholder='Code…';
   }
-  // Restore datalist if it was removed
-  const pcodeEl2=document.getElementById('t-pcode');
-  if(!pcodeEl2.getAttribute('list')) pcodeEl2.setAttribute('list','t-pcode-list');
   if(PRODUCTS[upper]){document.getElementById('t-pdesc').value=PRODUCTS[upper];tUpdateMfgRequired();return;}
   const lower=raw.toLowerCase();
   if(DESC_TO_CODE[lower]){document.getElementById('t-pcode').value=DESC_TO_CODE[lower];document.getElementById('t-pdesc').value=PRODUCTS[DESC_TO_CODE[lower]];tUpdateMfgRequired();return;}
@@ -1008,7 +1004,7 @@ function tGeneratePDF(fname){
   field2('Complaint No.', tv('t-complaint-no'), 'Dept', tv('t-dept'));
   field2('Complaint Date Received', tv('t-date'), 'Received Time', fmtTime12(tv('t-date-time')));
   field2('Attended On', tv('t-attended'), 'Attended Time', fmtTime12(tv('t-attended-time')));
-  field2('Assigned To', tv('t-assigned-to'), 'Submitted by (SE)', tv('t-se'));
+  field2('Assigned To', tv('t-assigned-to'), 'Submitted By', tv('t-se'));
   field2('Complaint Details', tv('t-month'), 'Area', tv('t-area'));
 
   // ── 2. CLIENT & LOCATION ─────────────────────────────
@@ -1222,6 +1218,12 @@ function tValidate(){
   const isCoord  = _currentRole==='coord';
   const isTech   = _currentRole==='tech';
 
+  // Coordinator and Technician MUST load from history — not create new complaints
+  if((isCoord||isTech) && !tv('t-complaint-no')){
+    toast('⚠️ Please load a complaint from 📂 History first, then update.');
+    return false;
+  }
+
   // Common fields for all roles (skip if hidden/locked)
   const commonReq=[['t-se','Submitted by (SE)'],['t-dept','Department'],['t-area','Area']];
   // Client fields — sales + coord + tech
@@ -1297,7 +1299,7 @@ function tBuildRow(){
   row[7]  = tv('t-dept');                      // Department
   row[8]  = tv('t-area');                      // Area
   row[9]  = tv('t-se');                        // Submitted by
-  row[10] = tv('t-pcode');                     // Product Code
+  row[10] = tGetPcode()||tv('t-pcode');        // Product Code (dropdown or manual)
   row[11] = tv('t-pdesc');                     // Product Description
   row[12] = tv('t-qty')||1;                    // Qty.
   row[13] = natSel==='Others'?'Others: '+tv('t-nature-other'):natSel; // Nature of complaint
@@ -1525,7 +1527,7 @@ function tOpenWA(){
       '📱 *To view:*'+'\n'+
       '1️⃣ Open *BSC App*'+'\n'+
       '2️⃣ Select your role'+'\n'+
-      '3️⃣ open *📂 History* → search *'+compNo+'*'
+      '3️⃣ Tap *📂 History* → search *'+compNo+'*'
     );
     window.open('https://wa.me/?text='+msg2,'_blank');
     toast('✅ WhatsApp opened');
@@ -1752,10 +1754,10 @@ function openHistory(role){
       window._sheetRows={headers:headers,rows:data.rows.slice().reverse(),role:_currentRole||role}; // newest first
       list.innerHTML=window._sheetRows.rows.map((row,ri)=>{
         const get=col=>{ const i=headers.indexOf(col); return i>=0?(row[i]||''):''; };
-        const clientVal=get('Dealer/Client/Contractor')||get('Customer / Company')||String(row[2]||'');
+        const clientVal=String(row[2]||'').trim()||get('Dealer/Client/Contractor');
         const area=get('Area')||String(row[8]||'');
-        const compNo=get('Complaint No')||String(row[1]||'');
-        const contactVal=get('Client Contact')||String(row[6]||'');
+        const compNo=String(row[1]||'').trim()||get('Complaint No'); // direct index first
+        const contactVal=String(row[6]||'').trim()||get('Client Contact');
         const techOrSE=get('Assigned To')||get('Technician')||get('Sales Executive')||String(row[25]||row[20]||'');
         function fmtDisp(v){ if(!v||v==='—') return '—'; const d=new Date(v); if(isNaN(d)) return v; return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); }
         const dateVal=fmtDisp(role==='tech'?get('Attended on'):get('Date'));
@@ -1860,7 +1862,7 @@ function loadReportFromSheet(ri, cacheOverride){
     setTimeout(()=>{
       // Text & number fields
       const fmap={
-        't-complaint-no': get('Complaint No'),
+        't-complaint-no': String(row[1]||'').trim()||get('Complaint No'),
         't-assigned-to':  String(row[25]||'').trim(), // Assigned To from sheet
         't-se':           get('Submitted by'),
         't-month':        get('Month'),
@@ -2317,7 +2319,7 @@ function loadReportFromSheet(ri, cacheOverride){
 
     setTimeout(()=>{
       const fmap2={
-        't-complaint-no': get('Complaint No'),
+        't-complaint-no': String(row[1]||'').trim()||get('Complaint No'),
         't-dept':         get('Department'),
         't-date':         toDateInput(get('Complaint Received Date')),
         't-date-time':    toTimeInput(get('Complaint Received Time')),
@@ -2586,28 +2588,37 @@ function generateComplaintNo(){
   if(!el) return;
   el.value='⏳ Generating…';
   const gsUrl=getGsUrl();
+  // Use server-side generation via Apps Script LockService
+  // to prevent duplicate CIS numbers when multiple users submit simultaneously
   const cbName='_bscCN'+Date.now();
   let done=false;
   let sc;
   const finish=function(data){
-    if(done) return;done=true;
+    if(done) return; done=true;
     delete window[cbName];
     if(sc&&sc.parentNode) sc.remove();
-    let nextNum=1;
-    if(data&&data.rows) nextNum=data.rows.length+1;
-    const num=String(nextNum).padStart(4,'0');
-    el.value='CIS-'+num;
-    toast('📋 Complaint No: CIS-'+num);
+    if(data&&data.complaintNo){
+      // Server returned a unique locked CIS number
+      el.value=data.complaintNo;
+      toast('📋 Complaint No: '+data.complaintNo);
+    } else {
+      // Fallback: timestamp-based to avoid blanks
+      const now=new Date();
+      const ts='CIS-T'+now.getFullYear().toString().slice(2)+
+        String(now.getMonth()+1).padStart(2,'0')+
+        String(now.getDate()).padStart(2,'0')+
+        String(now.getHours()).padStart(2,'0')+
+        String(now.getMinutes()).padStart(2,'0')+
+        String(now.getSeconds()).padStart(2,'0');
+      el.value=ts;
+      toast('📋 Complaint No: '+ts);
+    }
   };
   window[cbName]=finish;
   sc=document.createElement('script');
-  sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=getHistory&sheetTab=Reports&limit=60&callback='+cbName;
-  sc.onerror=function(){
-    const now=new Date();
-    const ts=now.getFullYear().toString().slice(2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
-    el.value='CIS-'+ts;finish(null);
-  };
-  setTimeout(function(){finish(null);},10000);
+  sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=generateCIS&sheetTab=Reports&callback='+cbName;
+  sc.onerror=function(){ finish(null); };
+  setTimeout(function(){ finish(null); }, 10000);
   document.head.appendChild(sc);
 }
 // ══ SEARCH ══
@@ -2768,6 +2779,35 @@ function tHandleOther(el, listId){
     el.setAttribute('list', listId);
     el.placeholder = listId==='t-area-list'?'Select area…':'Type client name…';
   }
+}
+
+// OTHER button — show plain input, hide dropdown input
+function tPcodeOther(){
+  document.getElementById('t-pcode').style.display='none';
+  document.getElementById('t-pcode-manual').style.display='';
+  document.getElementById('t-pcode-manual').value='';
+  document.getElementById('t-pdesc').value='';
+  document.getElementById('t-pdesc').placeholder='Type product description…';
+  document.getElementById('pcode-other-btn').style.display='none';
+  document.getElementById('pcode-reset-btn').style.display='inline';
+  document.getElementById('t-pcode-manual').focus();
+}
+// Back to list — show dropdown, hide plain input
+function tPcodeReset(){
+  document.getElementById('t-pcode').style.display='';
+  document.getElementById('t-pcode-manual').style.display='none';
+  document.getElementById('t-pcode').value='';
+  document.getElementById('t-pcode-manual').value='';
+  document.getElementById('t-pdesc').value='';
+  document.getElementById('t-pdesc').placeholder='Auto-filled or type…';
+  document.getElementById('pcode-other-btn').style.display='inline';
+  document.getElementById('pcode-reset-btn').style.display='none';
+  document.getElementById('t-pcode').focus();
+}
+// Get product code from whichever input is active
+function tGetPcode(){
+  const m=document.getElementById('t-pcode-manual');
+  return (m&&m.style.display!=='none'&&m.value.trim())?m.value.trim():document.getElementById('t-pcode').value.trim();
 }
 
 </script>
