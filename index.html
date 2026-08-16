@@ -2,16 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#0C3B6E">
 <title>BSC App — Bukamal</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="window.__xlsxFailed=true"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="window.__jspdfFailed=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --navy:#0C3B6E;--blue:#1565C0;--blue2:#1976D2;--blue-lt:#E3F2FD;
@@ -22,9 +19,8 @@
   --r:12px;--rs:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{min-height:100%;-webkit-text-size-adjust:100%}
-body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;min-height:100dvh;font-size:15px;line-height:1.5}
-.screen{display:none;min-height:100vh;min-height:100dvh}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;font-size:15px;line-height:1.5}
+.screen{display:none;min-height:100vh}
 .screen.active{display:block}
 
 /* LOGIN */
@@ -46,9 +42,8 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
 
 /* TOP BAR */
 .topbar{background:linear-gradient(135deg,#0C3B6E 0%,#1565C0 100%);padding:0 14px;
-  padding-left:calc(14px + env(safe-area-inset-left));padding-right:calc(14px + env(safe-area-inset-right));
   display:flex;align-items:center;justify-content:space-between;
-  height:60px;position:-webkit-sticky;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(12,59,110,.35)}
+  height:60px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(12,59,110,.35)}
 .topbar.purple{background:linear-gradient(135deg,#4A148C 0%,#6A1B9A 100%)}
 .tb-left{display:flex;flex-direction:column}
 .tb-title{color:#fff;font-size:16px;font-weight:700;letter-spacing:-.01em}
@@ -59,10 +54,7 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
   border-radius:6px;cursor:pointer;white-space:nowrap}
 
 /* CARDS */
-.wrap{max-width:720px;margin:0 auto;padding:12px 12px 155px;
-  padding-bottom:calc(155px + env(safe-area-inset-bottom));
-  padding-left:calc(12px + env(safe-area-inset-left));
-  padding-right:calc(12px + env(safe-area-inset-right))}
+.wrap{padding:12px 12px 155px}
 .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
 .card-head{padding:11px 16px;display:flex;align-items:center;gap:8px;border-bottom:1.5px solid var(--border)}
 .card-head .icon{font-size:18px}
@@ -73,7 +65,7 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
 .field label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px;letter-spacing:.01em}
 .field label .req{color:#E53935}
 .field input,.field select,.field textarea{
-  width:100%;font-family:'Inter',sans-serif;font-size:16px;color:var(--t1);
+  width:100%;font-family:'Inter',sans-serif;font-size:15px;color:var(--t1);
   background:#F8FAFC;border:1.5px solid var(--border);border-radius:var(--rs);
   padding:11px 13px;-webkit-appearance:none;appearance:none;transition:all .15s}
 .field input:focus,.field select:focus,.field textarea:focus{
@@ -100,9 +92,9 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
 .part-row{display:flex;align-items:center;gap:8px}
 .part{flex:1;padding:10px 13px;border-radius:var(--rs);border:1.5px solid var(--border);
   background:#F8FAFC;font-size:13px;font-weight:500;color:var(--t2);
-  cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;text-align:left}
+  cursor:pointer;transition:all .15s;user-select:none;text-align:left}
 .part.on{background:var(--navy);border-color:var(--navy);color:#fff}
-.part-qty{width:68px;flex-shrink:0;font-family:'Inter',sans-serif;font-size:16px;color:var(--t1);
+.part-qty{width:68px;flex-shrink:0;font-family:'Inter',sans-serif;font-size:14px;color:var(--t1);
   background:#F8FAFC;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 8px;
   text-align:center;-webkit-appearance:none;appearance:none;transition:all .15s;display:none}
 .part-qty.show{display:block}
@@ -110,9 +102,9 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
 
 /* ACTION BAR */
 .abar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1.5px solid var(--border);
-  padding:10px 14px;padding-left:calc(14px + env(safe-area-inset-left));padding-right:calc(14px + env(safe-area-inset-right));padding-bottom:max(10px,env(safe-area-inset-bottom));
+  padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));
   display:flex;flex-direction:column;gap:8px;z-index:200;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
-.abar-row{display:flex;gap:8px;width:100%;max-width:696px;margin-left:auto;margin-right:auto}
+.abar-row{display:flex;gap:8px}
 .btn-save{flex:1;padding:12px 6px;color:#fff;border:none;border-radius:var(--r);
   font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer}
 .btn-navy{background:var(--navy)} .btn-blue{background:var(--blue)}
@@ -140,16 +132,6 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
 .step-active { background:#1565C0 }
 .step-wait { background:#BDBDBD }
 
-/* DESKTOP POINTER FEEDBACK — mouse only, excluded on touchscreens */
-@media (hover:hover) and (pointer:fine){
-  .role-card{transition:background .15s,transform .15s}
-  .role-card:hover{background:rgba(255,255,255,.22)}
-  .st:hover,.part:hover,.rcard:hover{filter:brightness(.97)}
-  .btn-save:hover,.btn-wa:hover,.btn-new:hover,.tb-btn:hover,
-  .modal-btns button:hover{filter:brightness(1.1)}
-  .part:hover{border-color:var(--blue2)}
-}
-
 /* TOAST */
 .toast{position:fixed;bottom:148px;left:50%;transform:translateX(-50%);background:var(--t1);color:#fff;
   padding:10px 20px;border-radius:24px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;
@@ -157,10 +139,10 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
 .toast.show{opacity:1}
 
 /* MODALS */
-.modal-bg{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:flex-end}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:flex-end}
 .modal-bg.show{display:flex}
 .modal{background:#fff;border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:520px;
-  margin:0 auto;max-height:88vh;max-height:88dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:28px}
+  margin:0 auto;max-height:88vh;overflow-y:auto;padding-bottom:28px}
 .modal h3{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--navy)}
 .modal-btns{display:flex;gap:8px;margin-top:14px}
 .modal-btns button{flex:1;padding:13px;border-radius:var(--rs);border:none;
@@ -524,14 +506,14 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
     <p style="font-size:12px;color:var(--t2);margin-bottom:14px">Both Technician and Sales reports sync to the same Apps Script URL. They are saved on separate sheet tabs: <strong>Reports</strong> and <strong>Reports</strong>.</p>
     <div class="field">
       <label>Google Apps Script Web App URL</label>
-      <input type="text" id="settings-gs-url" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:16px">
+      <input type="text" id="settings-gs-url" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:12px">
     </div>
     <div style="background:#E8F5E9;border-radius:8px;padding:10px 12px;font-size:11px;color:#2E7D32;margin-top:8px">
       ✅ Your Apps Script must read the <strong>sheetTab</strong> field to route data to the correct sheet. The tab name is sent automatically with every report.
     </div>
     <div class="field" style="margin-top:12px">
       <label>Google Sheet Direct URL (for History links)</label>
-      <input type="text" id="settings-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" style="font-size:16px">
+      <input type="text" id="settings-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" style="font-size:12px">
       <div style="font-size:11px;color:var(--t3);margin-top:4px">Paste your Google Sheet URL — each history card will show a link filtered by client name (Column C).</div>
     </div>
     <div class="modal-btns">
@@ -578,116 +560,8 @@ body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;b
 <div class="toast" id="toast"></div>
 
 <script>
-
-/* ══════════════════════════════════════════════════════════════════════
-   BROWSER COMPATIBILITY LAYER — Android / iOS / Windows
-   Added wrapper only. No application logic below this block was changed.
-
-   Why it exists: iOS Safari THROWS a SecurityError on any localStorage
-   access when the page runs from file://, in Private Browsing, or with
-   Settings > Safari > "Block All Cookies" on. The settings IIFE below
-   touches localStorage at top level, so that throw aborted the whole
-   script. Function declarations still hoisted (so taps registered), but
-   every let/const after the throw stayed in the Temporal Dead Zone —
-   so enterRole()'s first line threw ReferenceError and nothing happened.
-   ══════════════════════════════════════════════════════════════════════ */
-var BSC_MEM = {};
-var BSC_STORAGE_OK = false;
-try {
-  window.localStorage.setItem('__bsc_probe__', '1');
-  window.localStorage.removeItem('__bsc_probe__');
-  BSC_STORAGE_OK = true;
-} catch (e) {
-  BSC_STORAGE_OK = false;
-}
-
-var LS = {
-  getItem: function (k) {
-    if (BSC_STORAGE_OK) {
-      try { var v = window.localStorage.getItem(k); if (v !== null) return v; }
-      catch (e) { BSC_STORAGE_OK = false; }
-    }
-    return Object.prototype.hasOwnProperty.call(BSC_MEM, k) ? BSC_MEM[k] : null;
-  },
-  setItem: function (k, v) {
-    v = String(v);
-    BSC_MEM[k] = v;
-    if (BSC_STORAGE_OK) {
-      try { window.localStorage.setItem(k, v); }
-      catch (e) { BSC_STORAGE_OK = false; }
-    }
-  },
-  removeItem: function (k) {
-    delete BSC_MEM[k];
-    if (BSC_STORAGE_OK) { try { window.localStorage.removeItem(k); } catch (e) {} }
-  },
-  keys: function () {
-    var out = Object.keys(BSC_MEM);
-    if (BSC_STORAGE_OK) {
-      try {
-        Object.keys(window.localStorage).forEach(function (k) {
-          if (out.indexOf(k) === -1) out.push(k);
-        });
-      } catch (e) { BSC_STORAGE_OK = false; }
-    }
-    return out;
-  }
-};
-
-/* iPhones and Android phones have no visible console. Surface errors
-   on screen so a failure is never silent again. */
-(function () {
-  function show(msg) {
-    try {
-      var t = document.getElementById('toast');
-      if (t) { t.textContent = '⚠️ ' + msg; t.classList.add('show');
-               clearTimeout(t._t); t._t = setTimeout(function () { t.classList.remove('show'); }, 6000); }
-    } catch (e) {}
-  }
-  window.addEventListener('error', function (ev) {
-    show((ev.message || 'Script error') + (ev.lineno ? ' (line ' + ev.lineno + ')' : ''));
-  });
-  window.addEventListener('unhandledrejection', function (ev) {
-    var r = ev.reason;
-    show((r && r.message) ? r.message : 'Background task failed');
-  });
-})();
-
-function bscStorageNotice() {
-  if (BSC_STORAGE_OK || window.__bscStorageWarned) return;
-  window.__bscStorageWarned = true;
-  setTimeout(function () {
-    try { toast('ℹ️ Private Browsing / storage blocked — saving to Google Sheets still works, but local drafts and history won\'t survive a reload.'); } catch (e) {}
-  }, 900);
-}
-
-function bscLibReady(kind) {
-  if (kind === 'pdf') {
-    if (window.jspdf && window.jspdf.jsPDF) return true;
-    try { toast('⚠️ PDF library not loaded — check your connection and reload.'); } catch (e) {}
-    return false;
-  }
-  if (typeof XLSX !== 'undefined' && XLSX && XLSX.utils) return true;
-  try { toast('⚠️ Excel library not loaded — check your connection and reload.'); } catch (e) {}
-  return false;
-}
-
-/* iOS Safari sometimes refuses the <a download> path jsPDF uses.
-   Fall back to opening the PDF in the built-in viewer. */
-function bscSavePdf(doc, filename) {
-  try { doc.save(filename); }
-  catch (e) {
-    try {
-      var url = doc.output('bloburl');
-      var w = window.open(url, '_blank');
-      if (!w) window.location.href = url;
-    } catch (e2) { try { toast('⚠️ Could not generate PDF: ' + e2.message); } catch (e3) {} }
-  }
-}
-/* ═════════════ end compatibility layer — app code follows unchanged ═════════════ */
-
 // ══ PRODUCTS & LOOKUP ══
-var PRODUCTS = {
+const PRODUCTS = {
   'ELWH001':'W.HEATER 50 LTR AQUA HOT VERTICAL',
   'ELWH002':'W.HEATER 80 LTR AQUA HOT VERTICAL',
   'ELWH003':'W.HEATER 100 LTR AQUA HOT VERTICAL',
@@ -742,24 +616,22 @@ var PRODUCTS = {
   'MAWP222':'ELECTRIC WATER PUMP VX 20/50-ST 415V 50Hz 10m',
   'OTHER':'',
 };
-var DESC_TO_CODE = {};
+const DESC_TO_CODE = {};
 Object.entries(PRODUCTS).forEach(([k,v])=>{ DESC_TO_CODE[v.toLowerCase()]=k; });
 
 // ══ FORCE URL UPDATE ══
 (function(){
-  try{
   const forced='https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
-  const saved=LS.getItem('bsc_gs_url');
+  const saved=localStorage.getItem('bsc_gs_url');
   // Always overwrite if saved URL is different from the current hardcoded one
-  if(saved !== forced) LS.setItem('bsc_gs_url', forced);
-  }catch(e){ /* never abort the script */ }
+  if(saved !== forced) localStorage.setItem('bsc_gs_url', forced);
 })();
 
 // ══ SHARED STATE ══
-var tLoadedKey = null;
-var sLoadedKey = null;
-var tSelStatus = '';
-var historyRole = '';
+let tLoadedKey = null;
+let sLoadedKey = null;
+let tSelStatus = '';
+let historyRole = '';
 
 // ══ SHARED UTILITIES ══
 function todayStr(){ return new Date().toISOString().split('T')[0]; }
@@ -771,7 +643,7 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3800);
 }
 function getGsUrl(){
-  return LS.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
+  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
 }
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
@@ -807,14 +679,14 @@ function goLogin(){
 // ══ SETTINGS ══
 function openSettings(){
   document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
-  document.getElementById('settings-sheet-url').value=LS.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
+  document.getElementById('settings-sheet-url').value=localStorage.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
   openModal('settings-modal');
 }
 function saveSettings(){
   const url=document.getElementById('settings-gs-url').value.trim();
-  if(url) LS.setItem('bsc_gs_url',url);
+  if(url) localStorage.setItem('bsc_gs_url',url);
   const sheetUrl=document.getElementById('settings-sheet-url').value.trim();
-  if(sheetUrl) LS.setItem('bsc_sheet_url',sheetUrl);
+  if(sheetUrl) localStorage.setItem('bsc_sheet_url',sheetUrl);
   closeModal('settings-modal');
   toast('✅ Settings saved!');
 }
@@ -905,8 +777,7 @@ function tGetSelectedParts(){
 
 // ══ TECHNICIAN — CORE FUNCTIONS (from R12) ══
 function tGeneratePDF(fname){
-  if(!bscLibReady('pdf')) return;
-  const jsPDF = window.jspdf.jsPDF;
+  const {jsPDF} = window.jspdf;
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const W=210, H=297, M=12, CW=W-M*2;
   let y=0;
@@ -1171,11 +1042,10 @@ function tGeneratePDF(fname){
   doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(100,110,120);
   doc.text('RDMS/FM/04, Issue 1  \u00b7  Bukamal Service Platform', W/2, H-4, {align:'center'});
 
-  bscSavePdf(doc, fname+'.pdf');
+  doc.save(fname+'.pdf');
 }
 
 function tDownloadExcel(fname){
-  if(!bscLibReady('xlsx')) return;
   const HEADERS = tBuildHeaders();
   const row = tBuildExcelRow();
   const wb=XLSX.utils.book_new();
@@ -1590,7 +1460,6 @@ function sBuildPayload(){
 }
 function sSaveReport(){
   if(!sValidate()) return;
-  if(!bscLibReady('xlsx')) return;
   const payload=sBuildPayload();
   const fname='BSC_Sales_'+tv('s-se').replace(/[^a-zA-Z0-9]/g,'-')+'_'+tv('s-date').replace(/-/g,'');
   const HEADERS=Object.keys(payload).filter(k=>k!=='sheetTab');
@@ -1606,8 +1475,8 @@ function sSaveReport(){
 async function sSaveToSheets(){
   if(!sValidate()) return;
   const fp=[tv('s-se'),tv('s-date'),tv('s-customer')].join('|').toLowerCase();
-  const dup=LS.keys().filter(k=>k.startsWith('bsc_sales_')).some(k=>{
-    try{const s=JSON.parse(LS.getItem(k)||'{}');return s._fp===fp&&s._sent;}catch(e){return false;}
+  const dup=Object.keys(localStorage).filter(k=>k.startsWith('bsc_sales_')).some(k=>{
+    try{const s=JSON.parse(localStorage.getItem(k)||'{}');return s._fp===fp&&s._sent;}catch(e){return false;}
   });
   if(dup&&!confirm('⚠️ This report appears already sent to Sheets. Send again?')) return;
   toast('☁️ Saving Sales report to Google Sheets…');
@@ -1691,13 +1560,13 @@ function saveLocalReport(role,fname,sent=false){
   // For sheet-sourced records (key starts with __sheet__), store under that key directly
   // so repeated edits don't keep creating new local entries.
   const editKey = role==='tech' ? tLoadedKey : sLoadedKey;
-  if(editKey && (LS.getItem(editKey) || editKey.startsWith('__sheet__'))){
+  if(editKey && (localStorage.getItem(editKey) || editKey.startsWith('__sheet__'))){
     state._editedAt = new Date().toLocaleString('en-GB');
-    LS.setItem(editKey, JSON.stringify(state));
+    localStorage.setItem(editKey, JSON.stringify(state));
   } else {
-    const allKeys=LS.keys().filter(k=>k.startsWith(prefix)).sort();
-    if(allKeys.length>=50)LS.removeItem(allKeys[0]);
-    LS.setItem(prefix+Date.now(),JSON.stringify(state));
+    const allKeys=Object.keys(localStorage).filter(k=>k.startsWith(prefix)).sort();
+    if(allKeys.length>=50)localStorage.removeItem(allKeys[0]);
+    localStorage.setItem(prefix+Date.now(),JSON.stringify(state));
   }
   // Clear loaded key after saving
   if(role==='tech') tLoadedKey=null;
@@ -1767,7 +1636,7 @@ function openHistory(role){
         const title='<span style="background:#FFF9C4;color:#5D4037;padding:1px 5px;border-radius:4px;font-weight:700">'+(clientVal||'—')+'</span> · '+(area||'—');
         const meta=(role==='tech'?'👷 ':'👤 ')+(techOrSE||'—')+' | 📅 '+(dateVal||'—')+' | '+(status||'—');
         const SHEET_URL='https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
-        const sheetBase=LS.getItem('bsc_sheet_url')||SHEET_URL;
+        const sheetBase=localStorage.getItem('bsc_sheet_url')||SHEET_URL;
         const sheetM=sheetBase.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
         const sheetId=sheetM?sheetM[1]:'';
         const viewUrl=sheetId
@@ -2466,10 +2335,10 @@ function loadReportFromSheet(ri, cacheOverride){
 }
 
 // ══ WORKFLOW — ROLE MANAGEMENT ══
-var _currentRole = 'tech';
-var _wfStatus = 'Pending';
+let _currentRole = 'tech';
+let _wfStatus = 'Pending';
 
-var ROLE_CONFIG = {
+const ROLE_CONFIG = {
   sales: {
     label: '📞 Sales Team', topbar: '📞 Sales Team', wfStatus: 'Pending', step: 1,
     lockedCards: [], hiddenCards: ['spare-parts-card','complaint-work-card'],
@@ -2492,7 +2361,6 @@ var ROLE_CONFIG = {
 };
 
 function enterRole(role){
-  bscStorageNotice();
   _currentRole = role;
   _wfStatus = ROLE_CONFIG[role].wfStatus;
   // Clear sheet cache on role switch — ensures fresh data for each role
@@ -2622,7 +2490,7 @@ function generateComplaintNo(){
   document.head.appendChild(sc);
 }
 // ══ SEARCH ══
-var _searchCache = null;
+let _searchCache = null;
 
 function openSearch(){
   openModal('search-modal');
