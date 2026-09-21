@@ -621,7 +621,7 @@ Object.entries(PRODUCTS).forEach(([k,v])=>{ DESC_TO_CODE[v.toLowerCase()]=k; });
 
 // ══ FORCE URL UPDATE ══
 (function(){
-  const forced='https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
+  const forced='https://script.google.com/macros/s/AKfycbw_ttEEtoKLstAGl7vhzY_325kIeZ08hEmCwoVp-Z8SanOwEV1bgpFWjfmimdVQJCA6/exec';
   const saved=localStorage.getItem('bsc_gs_url');
   // Always overwrite if saved URL is different from the current hardcoded one
   if(saved !== forced) localStorage.setItem('bsc_gs_url', forced);
@@ -643,7 +643,7 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3800);
 }
 function getGsUrl(){
-  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
+  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbw_ttEEtoKLstAGl7vhzY_325kIeZ08hEmCwoVp-Z8SanOwEV1bgpFWjfmimdVQJCA6/exec';
 }
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
@@ -678,7 +678,7 @@ function goLogin(){
 
 // ══ SETTINGS ══
 function openSettings(){
-  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
+  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbw_ttEEtoKLstAGl7vhzY_325kIeZ08hEmCwoVp-Z8SanOwEV1bgpFWjfmimdVQJCA6/exec';
   document.getElementById('settings-sheet-url').value=localStorage.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
   openModal('settings-modal');
 }
@@ -2462,42 +2462,47 @@ function generateComplaintNo(){
   if(!el) return;
   el.value='⏳ Generating…';
   const gsUrl=getGsUrl();
-  // Use server-side generation via Apps Script LockService
-  // to prevent duplicate CIS numbers when multiple users submit simultaneously
-  const cbName='_bscCN'+Date.now();
-  let done=false;
-  let sc;
-  const finish=function(data){
-    if(done) return; done=true;
-    delete window[cbName];
-    if(sc&&sc.parentNode) sc.remove();
+  // POST to Apps Script to get a server-locked unique CIS number
+  // LockService in doPost prevents duplicates even with simultaneous users
+  const payload=JSON.stringify({action:'generateCIS',sheetTab:'Reports'});
+  fetch(gsUrl,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:payload
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
     if(data&&data.complaintNo){
-      // Server returned a unique locked CIS number
       el.value=data.complaintNo;
-      toast('📋 Complaint No: '+data.complaintNo);
+      toast('📋 '+data.complaintNo+' assigned');
     } else {
-      // Fallback: timestamp-based to avoid blanks
-      const now=new Date();
-      const ts='CIS-T'+now.getFullYear().toString().slice(2)+
-        String(now.getMonth()+1).padStart(2,'0')+
-        String(now.getDate()).padStart(2,'0')+
-        String(now.getHours()).padStart(2,'0')+
-        String(now.getMinutes()).padStart(2,'0')+
-        String(now.getSeconds()).padStart(2,'0');
-      el.value=ts;
-      toast('📋 Complaint No: '+ts);
+      fallbackCIS();
     }
-  };
-  window[cbName]=finish;
-  sc=document.createElement('script');
-  sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=generateCIS&sheetTab=Reports&callback='+cbName;
-  sc.onerror=function(){ finish(null); };
-  setTimeout(function(){ finish(null); }, 10000);
-  document.head.appendChild(sc);
-}
-// ══ SEARCH ══
-let _searchCache = null;
+  })
+  .catch(function(){
+    fallbackCIS();
+  });
 
+  function fallbackCIS(){
+    // Fallback: count rows via JSONP
+    const cb='_bscCN'+Date.now();
+    let done=false; let sc;
+    const fin=function(d){
+      if(done)return; done=true;
+      delete window[cb];
+      if(sc&&sc.parentNode)sc.remove();
+      const n=(d&&d.rows)?d.rows.length+1:1;
+      el.value='CIS-'+String(n).padStart(4,'0');
+      toast('📋 '+el.value);
+    };
+    window[cb]=fin;
+    sc=document.createElement('script');
+    sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=getHistory&sheetTab=Reports&limit=200&callback='+cb;
+    sc.onerror=fin.bind(null,null);
+    setTimeout(fin.bind(null,null),10000);
+    document.head.appendChild(sc);
+  }
+}
 function openSearch(){
   openModal('search-modal');
   const inp = document.getElementById('search-input');
