@@ -621,7 +621,7 @@ Object.entries(PRODUCTS).forEach(([k,v])=>{ DESC_TO_CODE[v.toLowerCase()]=k; });
 
 // ══ FORCE URL UPDATE ══
 (function(){
-  const forced='https://script.google.com/macros/s/AKfycbw_ttEEtoKLstAGl7vhzY_325kIeZ08hEmCwoVp-Z8SanOwEV1bgpFWjfmimdVQJCA6/exec';
+  const forced='https://script.google.com/macros/s/AKfycbzjRsiA0znAVz5tb82X8h9UVPHcIdOxMhMVddNifH6JXHY6BTPx0YUCqXf7ojF4DzeV/exec';
   const saved=localStorage.getItem('bsc_gs_url');
   // Always overwrite if saved URL is different from the current hardcoded one
   if(saved !== forced) localStorage.setItem('bsc_gs_url', forced);
@@ -643,7 +643,7 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3800);
 }
 function getGsUrl(){
-  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbw_ttEEtoKLstAGl7vhzY_325kIeZ08hEmCwoVp-Z8SanOwEV1bgpFWjfmimdVQJCA6/exec';
+  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbzjRsiA0znAVz5tb82X8h9UVPHcIdOxMhMVddNifH6JXHY6BTPx0YUCqXf7ojF4DzeV/exec';
 }
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
@@ -678,7 +678,7 @@ function goLogin(){
 
 // ══ SETTINGS ══
 function openSettings(){
-  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbw_ttEEtoKLstAGl7vhzY_325kIeZ08hEmCwoVp-Z8SanOwEV1bgpFWjfmimdVQJCA6/exec';
+  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbzjRsiA0znAVz5tb82X8h9UVPHcIdOxMhMVddNifH6JXHY6BTPx0YUCqXf7ojF4DzeV/exec';
   document.getElementById('settings-sheet-url').value=localStorage.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
   openModal('settings-modal');
 }
@@ -1303,17 +1303,37 @@ async function tSaveToSheets(){
   if(saveBtn) saveBtn.style.opacity='0.5';
 
   try{
-    await fetch(gsUrl,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain;charset=UTF-8'},
-      body:JSON.stringify(payload)
-    });
+    let savedCIS = compNo;
+    const isNewRow = !payload.action || payload.action !== 'updateRow';
+
+    if(isNewRow){
+      // New row: use regular fetch so we can read the CIS number assigned by Apps Script
+      try{
+        const resp = await fetch(gsUrl,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=UTF-8'},
+          body:JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if(data && data.complaintNo){
+          savedCIS = data.complaintNo;
+          const el = document.getElementById('t-complaint-no');
+          if(el) el.value = savedCIS;
+          toast('📋 Complaint No: '+savedCIS);
+        }
+      }catch(corsErr){
+        // CORS failed — fall back to no-cors
+        await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
+      }
+    } else {
+      // Update row: no-cors is fine, response not needed
+      await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
+    }
+
     // Mark complaint as existing — all future saves by any role will updateRow
-    window._savedComplaints['updated_'+compNo] = true;
-    // Keep _editingRow alive with complaint no for subsequent saves
+    window._savedComplaints['updated_'+savedCIS] = true;
     if(!window._editingRow) window._editingRow = {};
-    window._editingRow.complaintNo = compNo;
+    window._editingRow.complaintNo = savedCIS;
     saveLocalReport('tech',fname,true);
     toast(payload['action']==='updateRow'?'✅ Record updated in Google Sheets!':'✅ Saved to Google Sheets!');
     tLoadedKey=null;
@@ -2376,7 +2396,7 @@ function enterRole(role){
   document.getElementById('screen-tech').classList.add('active');
   applyRoleUI(role);
   initTech();
-  if(role==='sales') generateComplaintNo();
+  if(role==='sales'){ document.getElementById('t-complaint-no').value='⏳ Will be assigned on submit'; }
   window.scrollTo(0,0);
 }
 
@@ -2457,52 +2477,8 @@ function goLogin(){
   window.scrollTo(0,0);
 }
 
-function generateComplaintNo(){
-  const el=document.getElementById('t-complaint-no');
-  if(!el) return;
-  el.value='⏳ Generating…';
-  const gsUrl=getGsUrl();
-  // POST to Apps Script to get a server-locked unique CIS number
-  // LockService in doPost prevents duplicates even with simultaneous users
-  const payload=JSON.stringify({action:'generateCIS',sheetTab:'Reports'});
-  fetch(gsUrl,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:payload
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    if(data&&data.complaintNo){
-      el.value=data.complaintNo;
-      toast('📋 '+data.complaintNo+' assigned');
-    } else {
-      fallbackCIS();
-    }
-  })
-  .catch(function(){
-    fallbackCIS();
-  });
+// CIS number now assigned atomically during save in Apps Script
 
-  function fallbackCIS(){
-    // Fallback: count rows via JSONP
-    const cb='_bscCN'+Date.now();
-    let done=false; let sc;
-    const fin=function(d){
-      if(done)return; done=true;
-      delete window[cb];
-      if(sc&&sc.parentNode)sc.remove();
-      const n=(d&&d.rows)?d.rows.length+1:1;
-      el.value='CIS-'+String(n).padStart(4,'0');
-      toast('📋 '+el.value);
-    };
-    window[cb]=fin;
-    sc=document.createElement('script');
-    sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=getHistory&sheetTab=Reports&limit=200&callback='+cb;
-    sc.onerror=fin.bind(null,null);
-    setTimeout(fin.bind(null,null),10000);
-    document.head.appendChild(sc);
-  }
-}
 function openSearch(){
   openModal('search-modal');
   const inp = document.getElementById('search-input');
