@@ -150,43 +150,6 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-confirm{background:var(--navy);color:#fff}
 .btn-cancel{background:var(--bg);color:var(--t2)}
 .rcard{border:1.5px solid var(--border);border-radius:var(--rs);padding:12px;background:#F8FAFC;margin-bottom:8px}
-
-/* ── iOS Custom Dropdown ─────────────────────────── */
-.ios-dropdown-overlay{
-  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.4);z-index:9999;
-}
-.ios-dropdown-sheet{
-  position:absolute;bottom:0;left:0;width:100%;
-  background:#fff;border-radius:16px 16px 0 0;
-  max-height:60vh;display:flex;flex-direction:column;
-  box-shadow:0 -4px 20px rgba(0,0,0,0.15);
-}
-.ios-dropdown-header{
-  padding:12px 16px;border-bottom:1px solid #eee;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.ios-dropdown-header span{font-weight:600;font-size:15px;color:#0C3B6E;}
-.ios-dropdown-close{
-  background:#F5F5F5;border:none;border-radius:20px;
-  padding:4px 12px;font-size:13px;color:#555;cursor:pointer;
-}
-.ios-dropdown-search{
-  margin:8px 12px;padding:8px 12px;
-  border:1.5px solid #ddd;border-radius:8px;
-  font-size:14px;font-family:Inter,sans-serif;outline:none;
-}
-.ios-dropdown-list{
-  overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;
-}
-.ios-dropdown-item{
-  padding:13px 16px;border-bottom:1px solid #f0f0f0;
-  font-size:14px;color:#222;cursor:pointer;
-  display:flex;align-items:center;gap:8px;
-}
-.ios-dropdown-item:active{background:#EEF5FF;}
-.ios-dropdown-item .item-sub{font-size:11px;color:#888;display:block;}
-
 </style>
 </head>
 <body>
@@ -299,7 +262,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
           <input type="text" id="t-se" placeholder="Enter name…">
         </div>
         <div class="field">
-          <label>Complaint Details/Remarks</label>
+          <label>Complaint Details</label>
           <input type="text" id="t-month" placeholder="Enter complaint details…">
         </div>
       </div>
@@ -327,10 +290,6 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
         <div class="field"><label>House <span class="req">*</span></label><input type="text" id="t-house" placeholder="No."></div>
         <div class="field"><label>Road <span class="req">*</span></label><input type="text" id="t-road" placeholder="No."></div>
         <div class="field"><label>Block <span class="req">*</span></label><input type="text" id="t-block" placeholder="No."></div>
-      </div>
-      <div class="field">
-        <label>📍 Location Link</label>
-        <input type="url" id="t-location" placeholder="Paste Google Maps link here…" autocomplete="off" style="font-size:12px">
       </div>
     </div>
   </div>
@@ -662,7 +621,7 @@ Object.entries(PRODUCTS).forEach(([k,v])=>{ DESC_TO_CODE[v.toLowerCase()]=k; });
 
 // ══ FORCE URL UPDATE ══
 (function(){
-  const forced='https://script.google.com/macros/s/AKfycbwxN0uuhEZPxNaAY_1Q0i7U06HxPchVC9F2xpanUMitMtxK6uNE0ayrHNABQ-Gv5pxH/exec';
+  const forced='https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
   const saved=localStorage.getItem('bsc_gs_url');
   // Always overwrite if saved URL is different from the current hardcoded one
   if(saved !== forced) localStorage.setItem('bsc_gs_url', forced);
@@ -684,7 +643,7 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3800);
 }
 function getGsUrl(){
-  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbwxN0uuhEZPxNaAY_1Q0i7U06HxPchVC9F2xpanUMitMtxK6uNE0ayrHNABQ-Gv5pxH/exec';
+  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
 }
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
@@ -719,7 +678,7 @@ function goLogin(){
 
 // ══ SETTINGS ══
 function openSettings(){
-  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbwxN0uuhEZPxNaAY_1Q0i7U06HxPchVC9F2xpanUMitMtxK6uNE0ayrHNABQ-Gv5pxH/exec';
+  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
   document.getElementById('settings-sheet-url').value=localStorage.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
   openModal('settings-modal');
 }
@@ -897,7 +856,7 @@ function tGeneratePDF(fname){
   doc.setFillColor(12,59,110); doc.rect(0,0,W,22,'F');
   doc.setTextColor(255,255,255);
   doc.setFontSize(15); doc.setFont('helvetica','bold');
-  doc.text('COMPLAINT SERVICE REPORT', W/2, 10, {align:'center'});
+  doc.text('CIS COMPLAINT SERVICE REPORT', W/2, 10, {align:'center'});
   doc.setFontSize(8); doc.setFont('helvetica','normal');
   doc.text('Bukamal  \u00b7  RDMS/FM/04  \u00b7  Issue 1', W/2, 17, {align:'center'});
 
@@ -917,14 +876,13 @@ function tGeneratePDF(fname){
   field2('Complaint Date Received', tv('t-date'), 'Received Time', fmtTime12(tv('t-date-time')));
   field2('Attended On', tv('t-attended'), 'Attended Time', fmtTime12(tv('t-attended-time')));
   field2('Assigned To', tv('t-assigned-to'), 'Submitted By', tv('t-se'));
-  field2('Complaint Details/Remarks', tv('t-month'), 'Area', tv('t-area'));
+  field2('Complaint Details', tv('t-month'), 'Area', tv('t-area'));
 
   // ── 2. CLIENT & LOCATION ─────────────────────────────
   band('CLIENT & LOCATION');
   field1('Dealer / Client / Contractor', tv('t-dealer'));
   field2('Contact Number 1', tv('t-contact1'), 'Contact Number 2', tv('t-contact2'));
   field3('House', tv('t-house'), 'Road', tv('t-road'), 'Block', tv('t-block'));
-  if(tv('t-location')) field1('📍 Location Link', tv('t-location'));
 
   // ── 3. PRODUCT ───────────────────────────────────────
   band('PRODUCT');
@@ -1195,90 +1153,50 @@ function tSaveReport(){
 
 // ══ BUILD ROW — aligned to HEADERS array ══
 function tBuildRow(){
-  const st = tSelStatus||tv('t-status-custom');
-  const parts = tGetSelectedParts();
-  const natSel = document.getElementById('t-nature').value;
-  const row = new Array(71).fill('');
-  // Get existing Si from hidden field (for edit mode)
-  const existingSi = document.getElementById('t-si-hidden')?document.getElementById('t-si-hidden').value:'';
-  row[0]  = existingSi||'';                    // Si
-  row[1]  = tv('t-complaint-no');              // Complaint No
-  row[2]  = tv('t-dealer');                    // Dealer/Client/Contractor
-  row[3]  = tv('t-house');                     // House
-  row[4]  = tv('t-road');                      // Road
-  row[5]  = tv('t-block');                     // Block
-  row[6]  = tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):''); // Client Contact
-  row[7]  = tv('t-dept');                      // Department
-  row[8]  = tv('t-area');                      // Area
-  row[9]  = tv('t-se');                        // Submitted by
-  row[10] = tGetPcode()||tv('t-pcode');        // Product Code (dropdown or manual)
-  row[11] = tv('t-pdesc');                     // Product Description
-  row[12] = tv('t-qty')||1;                    // Qty.
-  row[13] = natSel==='Others'?'Others: '+tv('t-nature-other'):natSel; // Nature of complaint
-  row[14] = tv('t-date');                      // Complaint Received Date ← from Sales Team, preserved by all roles
-  row[15] = fmtTime12(tv('t-date-time'));      // Complaint Received Time
-  row[16] = tv('t-remark');                    // Remark
-  row[17] = tv('t-dop');                       // Date of Purchasing
-  row[18] = tv('t-serial');                    // Serial No.
-  row[19] = tv('t-mfg');                       // MFG Year
-  // Technician: for coord role, also copy Assigned To → Technician column
-    row[20] = tv('t-assigned-to')||tv('t-tech')||''; // Technician = same as Assigned To
-  row[21] = tv('t-attended');                  // Attended on
-  row[22] = fmtTime12(tv('t-attended-time')); // Complaint Attended Time
-  row[23] = tv('t-month');                     // Month
-  row[24] = st;                                // Status
-  row[25] = tv('t-assigned-to')||'';          // Assigned To
-  row[26] = _wfStatus||'Pending';             // Workflow Status
-  row[27] = tv('t-warr')==='Others'?tv('t-warr-other'):tv('t-warr'); // Remarks/Warranty Status
-  row[28] = tv('t-replaced')||'';             // Replaced Unit
-  // Spare parts [29-70] — aligned to sheet cols AD(30)-BR(70)
-  // row index = sheet col index - 1
-  if(parts['Element'])          row[29]=parts['Element'];          // AD col30
-  if(parts['Thermostat'])       row[30]=parts['Thermostat'];       // AE col31
-  if(parts['BottomLidCover'])   row[31]=parts['BottomLidCover'];   // AF col32
-  if(parts['ORing'])            row[32]=parts['ORing'];            // AG col33
-  if(parts['Impellor'])         row[33]=parts['Impellor'];         // AH col34
-  if(parts['Bearing'])          row[34]=parts['Bearing'];          // AI col35
-  if(parts['BSV'])              row[35]=parts['BSV'];              // AJ col36
-  if(parts['MechSeal'])         row[36]=parts['MechSeal'];         // AK col37
-  if(parts['Capacitor'])        row[37]=parts['Capacitor'];        // AL col38
-  if(parts['TSV'])              row[38]=parts['TSV'];              // AM col39
-  if(parts['LampIndicator'])    row[39]=parts['LampIndicator'];    // AN col40
-  if(parts['FrontBody'])        row[40]=parts['FrontBody'];        // AO col41
-  if(parts['ImpellorBackBody']) row[41]=parts['ImpellorBackBody']; // AP col42
-  if(parts['FrontCover'])       row[42]=parts['FrontCover'];       // AQ col43
-  if(parts['Terminal'])         row[43]=parts['Terminal'];         // AR col44
-  if(parts['WindingBase'])      row[44]=parts['WindingBase'];      // AS col45
-  if(parts['WireLegs'])         row[45]=parts['WireLegs'];         // AT col46
-  if(parts['Shaft'])            row[46]=parts['Shaft'];            // AU col47
-  if(parts['PowerConnector'])   row[47]=parts['PowerConnector'];   // AV col48
-  if(parts['CoverPlate'])       row[48]=parts['CoverPlate'];       // AW col49
-  if(parts['Fan'])              row[49]=parts['Fan'];              // AX col50
-  if(parts['FanCover'])         row[50]=parts['FanCover'];         // AY col51
-  if(parts['TopCover'])         row[51]=parts['TopCover'];         // AZ col52
-  if(parts['FlexibleHose'])     row[52]=parts['FlexibleHose'];     // BA col53
-  if(parts['FrontCasing'])      row[53]=parts['FrontCasing'];      // BB col54
-  if(parts['Anod'])             row[54]=parts['Anod'];             // BC col55
-  if(parts['ThermoGauge'])      row[55]=parts['ThermoGauge'];      // BD col56
-  if(parts['Filter'])           row[56]=parts['Filter'];           // BE col57
-  if(parts['Hook'])             row[57]=parts['Hook'];             // BF col58
-  if(parts['RubberGasket'])     row[58]=parts['RubberGasket'];     // BG col59
-  if(parts['Stator'])           row[59]=parts['Stator'];           // BH col60
-  if(parts['TeflonWasher'])     row[60]=parts['TeflonWasher'];     // BI col61
-  if(parts['Flange'])           row[61]=parts['Flange'];           // BJ col62
-  if(parts['BladeBrush'])       row[62]=parts['BladeBrush'];       // BK col63
-  if(parts['Knob'])             row[63]=parts['Knob'];             // BL col64
-  if(parts['Bowl'])             row[64]=parts['Bowl'];             // BM col65
-  if(parts['Gasket'])           row[65]=parts['Gasket'];           // BN col66
-  if(parts['Socket'])           row[66]=parts['Socket'];           // BO col67
-  if(parts['Bolt'])             row[67]=parts['Bolt'];             // BP col68
-  if(parts['WallGasket'])       row[68]=parts['WallGasket'];       // BQ col69
-  if(parts['Motor'])            row[69]=parts['Motor'];            // BR col70
-  row[70] = document.getElementById('part-others')&&document.getElementById('part-others').classList.contains('on')?tv('t-others-remark'):''; // BS col71
-  row[71] = tv('t-location');  // Location link
+  const st=tSelStatus||tv('t-status-custom');
+  const parts=tGetSelectedParts();
+  const natSel=document.getElementById('t-nature').value;
+  const row=new Array(73).fill('');
+  const eSi=document.getElementById('t-si-hidden')?document.getElementById('t-si-hidden').value:'';
+  row[0]=eSi||''; row[1]=tv('t-complaint-no'); row[2]=tv('t-dealer');
+  row[3]=tv('t-house'); row[4]=tv('t-building')||'';
+  row[5]=tv('t-road'); row[6]=tv('t-block'); row[7]=tv('t-location')||'';
+  row[8]=tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'');
+  row[9]=tv('t-dept'); row[10]=tv('t-area'); row[11]=tv('t-se');
+  row[12]=tGetPcode()||tv('t-pcode'); row[13]=tv('t-pdesc'); row[14]=tv('t-qty')||1;
+  row[15]=natSel==='Others'?'Others: '+tv('t-nature-other'):natSel;
+  row[16]=tv('t-date'); row[17]=fmtTime12(tv('t-date-time')); row[18]=tv('t-remark');
+  row[19]=tv('t-dop'); row[20]=tv('t-serial'); row[21]=tv('t-mfg');
+  row[22]=tv('t-assigned-to')||tv('t-tech')||'';
+  row[23]=tv('t-attended'); row[24]=fmtTime12(tv('t-attended-time'));
+  row[25]=tv('t-month'); row[26]=st; row[27]=tv('t-assigned-to')||'';
+  row[28]=_wfStatus||'Pending';
+  row[29]=tv('t-warr')==='Others'?tv('t-warr-other'):tv('t-warr');
+  row[30]=tv('t-replaced')||'';
+  if(parts['Element'])row[31]=parts['Element'];if(parts['Thermostat'])row[32]=parts['Thermostat'];
+  if(parts['BottomLidCover'])row[33]=parts['BottomLidCover'];if(parts['ORing'])row[34]=parts['ORing'];
+  if(parts['Impellor'])row[35]=parts['Impellor'];if(parts['Bearing'])row[36]=parts['Bearing'];
+  if(parts['BSV'])row[37]=parts['BSV'];if(parts['MechSeal'])row[38]=parts['MechSeal'];
+  if(parts['Capacitor'])row[39]=parts['Capacitor'];if(parts['TSV'])row[40]=parts['TSV'];
+  if(parts['LampIndicator'])row[41]=parts['LampIndicator'];if(parts['FrontBody'])row[42]=parts['FrontBody'];
+  if(parts['ImpellorBackBody'])row[43]=parts['ImpellorBackBody'];if(parts['FrontCover'])row[44]=parts['FrontCover'];
+  if(parts['Terminal'])row[45]=parts['Terminal'];if(parts['WindingBase'])row[46]=parts['WindingBase'];
+  if(parts['WireLegs'])row[47]=parts['WireLegs'];if(parts['Shaft'])row[48]=parts['Shaft'];
+  if(parts['PowerConnector'])row[49]=parts['PowerConnector'];if(parts['CoverPlate'])row[50]=parts['CoverPlate'];
+  if(parts['Fan'])row[51]=parts['Fan'];if(parts['FanCover'])row[52]=parts['FanCover'];
+  if(parts['TopCover'])row[53]=parts['TopCover'];if(parts['FlexibleHose'])row[54]=parts['FlexibleHose'];
+  if(parts['FrontCasing'])row[55]=parts['FrontCasing'];if(parts['Anod'])row[56]=parts['Anod'];
+  if(parts['ThermoGauge'])row[57]=parts['ThermoGauge'];if(parts['Filter'])row[58]=parts['Filter'];
+  if(parts['Hook'])row[59]=parts['Hook'];if(parts['RubberGasket'])row[60]=parts['RubberGasket'];
+  if(parts['Stator'])row[61]=parts['Stator'];if(parts['TeflonWasher'])row[62]=parts['TeflonWasher'];
+  if(parts['Flange'])row[63]=parts['Flange'];if(parts['BladeBrush'])row[64]=parts['BladeBrush'];
+  if(parts['Knob'])row[65]=parts['Knob'];if(parts['Bowl'])row[66]=parts['Bowl'];
+  if(parts['Gasket'])row[67]=parts['Gasket'];if(parts['Socket'])row[68]=parts['Socket'];
+  if(parts['Bolt'])row[69]=parts['Bolt'];if(parts['WallGasket'])row[70]=parts['WallGasket'];
+  if(parts['Motor'])row[71]=parts['Motor'];
+  row[72]=document.getElementById('part-others')&&document.getElementById('part-others').classList.contains('on')?tv('t-others-remark'):'';
   return row;
 }
-
 
 async function tSaveToSheets(){
   if(!tValidate()) return;
@@ -1289,18 +1207,17 @@ async function tSaveToSheets(){
   toast('☁️ Saving to Google Sheets…');
   const fname=tGetFname();
   const row=tBuildRow();
-  const HEADERS=['Si','Complaint No','Dealer/Client/Contractor','House','Road','Block',
-    'Client Contact','Department','Area','Submitted by','Product Code','Product Description','Qty.',
-    'Nature of complaint','Complaint Received Date','Complaint Received Time','Remark',
-    'Date of Purchasing','Serial No.','MFG Year','Technician','Attended on','Complaint Attended Time',
-    'Complaint Details','Status','Assigned To','Workflow Status','Remarks/Warranty Status','Replaced Unit',
-    'Element','Thermostat','Bottom Plastic Lid Cover','O Ring','Impellor','Bearing',
-    'Down Safety Valve/BSV','Mechanical Seal','Capacitor','Top Safety Valve','Lamp Indicator',
-    'Front Body','Impellor Back Body','Front Cover','Terminal','Winding Base','Wire & legs',
-    'Shaft','Supply Power Connector','Cover Plate','Fan','Fan Cover','Top Cover',
-    'Flexible Hose','Front Casing','Anod','Thermo metre Gauge','Filter','Hook',
-    'Rubber Gasket','Stator','Teflon Washer','Flange','Blade/Brush','Knob','Bowl',
-    'Gasket','Socket','Bolt','Wall Support gasket','Motor','Others Parts','Location'];
+  const HEADERS=[
+    'Si','Complaint No','Dealer/Client/Contractor','Flat','Building','Road','Block','Location',
+    'Client Contact','Department','Area','Submitted by','Product Code','Product Description','Qty.','Nature of complaint',
+    'Complaint Received Date','Complaint Received Time','Remark','Date of Purchasing','Serial No.','MFG Year','Technician','Attended on',
+    'Complaint Attended Time','Complaint Details','Status','Assigned To','Workflow Status','Remarks/Warranty Status','Replaced Unit','Element',
+    'Thermostat','Bottom Plastic Lid Cover','O Ring','Impellor','Bearing','Down Safety Valve/BSV','Mechanical Seal','Capacitor',
+    'Top Safety Valve','Lamp Indicator','Front Body','Impellor Back Body','Front Cover','Terminal','Winding Base','Wire & legs',
+    'Shaft','Supply Power Connector','Cover Plate','Fan','Fan Cover','Top Cover','Flexible Hose','Front Casing',
+    'Anod','Thermo metre Gauge','Filter','Hook','Rubber Gasket','Stator','Teflon Washer','Flange',
+    'Blade/Brush','Knob','Bowl','Gasket','Socket','Bolt','Wall Support gasket','Motor',
+    'Others Parts'];
   const payload={sheetTab:'Reports'};
   HEADERS.forEach((h,i)=>{payload[h]=row[i]||'';});
   // Always explicitly set complaint no (belt + suspenders)
@@ -1346,38 +1263,17 @@ async function tSaveToSheets(){
   if(saveBtn) saveBtn.style.opacity='0.5';
 
   try{
-    let savedCIS = compNo;
-    const isNewRow = !payload.action || payload.action !== 'updateRow';
-
-    if(isNewRow){
-      // New row: use regular fetch so we can read the CIS number assigned by Apps Script
-      try{
-        const resp = await fetch(gsUrl,{
-          method:'POST',
-          headers:{'Content-Type':'text/plain;charset=UTF-8'},
-          body:JSON.stringify(payload)
-        });
-        const data = await resp.json();
-        if(data && data.complaintNo){
-          // Strip CIS- prefix if present — save as plain number
-          savedCIS = data.complaintNo.replace(/^CIS-/,'');
-          const el = document.getElementById('t-complaint-no');
-          if(el) el.value = savedCIS;
-          toast('📋 Complaint No: '+savedCIS);
-        }
-      }catch(corsErr){
-        // CORS failed — fall back to no-cors
-        await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
-      }
-    } else {
-      // Update row: no-cors is fine, response not needed
-      await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
-    }
-
+    await fetch(gsUrl,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=UTF-8'},
+      body:JSON.stringify(payload)
+    });
     // Mark complaint as existing — all future saves by any role will updateRow
-    window._savedComplaints['updated_'+savedCIS] = true;
+    window._savedComplaints['updated_'+compNo] = true;
+    // Keep _editingRow alive with complaint no for subsequent saves
     if(!window._editingRow) window._editingRow = {};
-    window._editingRow.complaintNo = savedCIS;
+    window._editingRow.complaintNo = compNo;
     saveLocalReport('tech',fname,true);
     toast(payload['action']==='updateRow'?'✅ Record updated in Google Sheets!':'✅ Saved to Google Sheets!');
     tLoadedKey=null;
@@ -1400,8 +1296,6 @@ function tOpenWA(){
   const house=tv('t-house'); const road=tv('t-road'); const block=tv('t-block');
   const address=[house?'House '+house:'',road?'Road '+road:'',block?'Block '+block:'',tv('t-area')]
     .filter(Boolean).join(', ');
-    const locLink=tv('t-location');
-    const locationLine=locLink?('\n📌 Location: '+locLink):'';
   const remark=tv('t-remark');
   const compNo=tv('t-complaint-no');
 
@@ -1411,7 +1305,7 @@ function tOpenWA(){
       '🔧 *CIS New Complaint — '+compNo+'*\n━━━━━━━━━━━━━━━\n'+
       '🏠 *Client:* '+tv('t-dealer')+'\n'+
       '📞 *Contact:* '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\n'+
-      '📍 *Address:* '+address+locationLine+'\n'+
+      '📍 *Address:* '+address+'\n'+
       '🏢 *Dept:* '+tv('t-dept')+'\n'+
       '🔩 *Product:* '+tv('t-pcode')+' — '+tv('t-pdesc')+'\n'+
       '📋 *Nature:* '+document.getElementById('t-nature').value+'\n'+
@@ -1433,7 +1327,7 @@ function tOpenWA(){
         '👷 Assigned Technician: '+(tv('t-assigned-to')||tv('t-tech'))+'\n'+
         '🏠 Client: '+tv('t-dealer')+'\n'+
         '📞 Contact: '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\n'+
-        '📍 Address: '+address+locationLine+'\n'+
+        '📍 Address: '+address+'\n'+
         '🏢 Dept: '+tv('t-dept')+'\n'+
         '📅 Attended: '+tv('t-attended')+'\n'+
         '🔧 Complaint: '+document.getElementById('t-nature').value+'\n'+
@@ -1456,7 +1350,7 @@ function tOpenWA(){
       '👷 Assigned To: '+(tv('t-assigned-to')||tv('t-tech'))+'\n'+
       '🏠 Client: '+tv('t-dealer')+'\n'+
       '📞 Contact: '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\\n'+
-      '📍 Address: '+address+locationLine+'\n'+
+      '📍 Address: '+address+'\n'+
       '🔧 Status: *'+st+'*'+'\n'+
       '📋 Remark: '+(remark.substring(0,120)+(remark.length>120?'…':''))+'\n'+
       '━━━━━━━━━━━━━━━'+'\n'+
@@ -1699,7 +1593,7 @@ function openHistory(role){
         const clientVal=String(row[2]||'').trim()||get('Dealer/Client/Contractor');
         const area=get('Area')||String(row[8]||'');
         const compNo=String(row[1]||'').trim()||get('Complaint No'); // direct index first
-        const contactVal=String(row[6]||'').trim()||get('Client Contact');
+        const contactVal=String(row[8]||'').trim()||get('Client Contact');
         const techOrSE=get('Assigned To')||get('Technician')||get('Sales Executive')||String(row[25]||row[20]||'');
         function fmtDisp(v){ if(!v||v==='—') return '—'; const d=new Date(v); if(isNaN(d)) return v; return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); }
         const dateVal=fmtDisp(role==='tech'?get('Attended on'):get('Date'));
@@ -1805,28 +1699,30 @@ function loadReportFromSheet(ri, cacheOverride){
       // Text & number fields — using direct row indices for reliability
       const fmap={
         't-complaint-no': String(row[1]||'').trim(),
-        't-dept':         String(row[7]||'').trim(),
-        't-date':         toDateInput(String(row[14]||'').trim()),
-        't-date-time':    toTimeInput(String(row[15]||'').trim()),
-        't-se':           String(row[9]||'').trim(),
-        't-month':        String(row[23]||'').trim(), // Complaint Details
-        't-area':         String(row[8]||'').trim(),
+        't-dept':         String(row[9]||'').trim(),
+        't-date':         toDateInput(String(row[16]||'').trim()),
+        't-date-time':    toTimeInput(String(row[17]||'').trim()),
+        't-se':           String(row[11]||'').trim(),
+        't-month':        String(row[25]||'').trim(), // Complaint Details
+        't-area':         String(row[10]||'').trim(),
         't-dealer':       String(row[2]||'').trim(),
         't-house':        String(row[3]||'').trim(),
-        't-road':         String(row[4]||'').trim(),
-        't-block':        String(row[5]||'').trim(),
-        't-pcode':        String(row[10]||'').trim(),
-        't-pdesc':        String(row[11]||'').trim(),
-        't-qty':          String(row[12]||'').trim(),
-        't-serial':       String(row[18]||'').trim(),
-        't-mfg':          String(row[19]||'').trim(),
-        't-dop':          toDateInput(String(row[17]||'').trim()),
-        't-attended':     toDateInput(String(row[21]||'').trim()),
-        't-attended-time':toTimeInput(String(row[22]||'').trim()),
-        't-remark':       String(row[16]||'').trim(),
-        't-replaced':     String(row[28]||'').trim(),
-        't-location':     String(row[71]||'').trim(),
-        't-assigned-to':  String(row[25]||row[20]||'').trim(),
+        't-building':     String(row[4]||'').trim(),
+        't-location':     String(row[7]||'').trim(),
+        't-road':         String(row[5]||'').trim(),
+        't-block':        String(row[6]||'').trim(),
+        't-pcode':        String(row[12]||'').trim(),
+        't-pdesc':        String(row[13]||'').trim(),
+        't-qty':          String(row[14]||'').trim(),
+        't-serial':       String(row[20]||'').trim(),
+        't-mfg':          String(row[21]||'').trim(),
+        't-dop':          toDateInput(String(row[19]||'').trim()),
+        't-attended':     toDateInput(String(row[23]||'').trim()),
+        't-attended-time':toTimeInput(String(row[24]||'').trim()),
+        't-remark':       String(row[18]||'').trim(),
+        't-warr':         String(row[27]||'').trim(),
+        't-replaced':     String(row[30]||'').trim(),
+        't-assigned-to':  String(row[27]||row[22]||'').trim(),
       };
       Object.entries(fmap).forEach(([id,val])=>{
         const el=document.getElementById(id);
@@ -1853,8 +1749,8 @@ function loadReportFromSheet(ri, cacheOverride){
       // Read 'Assigned To' from sheet → set into t-tech SELECT
       // Assigned To populated via fmap above
 
-      // Contact — use direct row index [6] for reliability
-      const cd=String(row[6]||'').trim()||get('Client Contact');
+      // Contact — stored clean e.g. "38887563 / 39123456"
+      const cd=get('Client Contact');
       if(cd){
         const cparts=cd.split(' / ');
         const c1=document.getElementById('t-contact1');
@@ -1879,7 +1775,7 @@ function loadReportFromSheet(ri, cacheOverride){
       }
 
       // Status buttons
-      const stVal=String(row[24]||'').trim()||get('Status');
+      const stVal=String(row[26]||'').trim()||get('Status');
       if(stVal){
         tSelStatus=stVal;
         const stdVals=['Repair','Replacement','Warranty void','No problem in heater'];
@@ -1905,7 +1801,7 @@ function loadReportFromSheet(ri, cacheOverride){
 
       // Restore spare parts — all 41 parts mapped correctly
       (function(){
-        const qty=String(row[29]||'').trim()||get('Element');
+        const qty=get('Element');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Element"]');
           const qEl=document.getElementById('q-Element');
@@ -1913,7 +1809,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[30]||'').trim()||get('Thermostat');
+        const qty=get('Thermostat');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Thermostat"]');
           const qEl=document.getElementById('q-Thermostat');
@@ -1921,7 +1817,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[31]||'').trim()||get('Bottom Plastic Lid Cover');
+        const qty=get('Bottom Plastic Lid Cover');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="BottomLidCover"]');
           const qEl=document.getElementById('q-BottomLidCover');
@@ -1929,7 +1825,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[32]||'').trim()||get('O Ring');
+        const qty=get('O Ring');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="ORing"]');
           const qEl=document.getElementById('q-ORing');
@@ -1937,7 +1833,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[33]||'').trim()||get('Impellor');
+        const qty=get('Impellor');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Impellor"]');
           const qEl=document.getElementById('q-Impellor');
@@ -1945,7 +1841,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[34]||'').trim()||get('Bearing');
+        const qty=get('Bearing');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Bearing"]');
           const qEl=document.getElementById('q-Bearing');
@@ -1953,7 +1849,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[35]||'').trim()||get('Down Safety Valve/BSV');
+        const qty=get('Down Safety Valve/BSV');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="BSV"]');
           const qEl=document.getElementById('q-BSV');
@@ -1961,7 +1857,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[36]||'').trim()||get('Mechanical Seal');
+        const qty=get('Mechanical Seal');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="MechSeal"]');
           const qEl=document.getElementById('q-MechSeal');
@@ -1969,7 +1865,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[37]||'').trim()||get('Capacitor');
+        const qty=get('Capacitor');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Capacitor"]');
           const qEl=document.getElementById('q-Capacitor');
@@ -1977,7 +1873,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[38]||'').trim()||get('Top Safety Valve');
+        const qty=get('Top Safety Valve');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="TSV"]');
           const qEl=document.getElementById('q-TSV');
@@ -1985,7 +1881,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[39]||'').trim()||get('Lamp Indicator');
+        const qty=get('Lamp Indicator');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="LampIndicator"]');
           const qEl=document.getElementById('q-LampIndicator');
@@ -1993,7 +1889,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[40]||'').trim()||get('Front Body');
+        const qty=get('Front Body');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="FrontBody"]');
           const qEl=document.getElementById('q-FrontBody');
@@ -2001,7 +1897,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[41]||'').trim()||get('Impellor Back Body');
+        const qty=get('Impellor Back Body');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="ImpellorBackBody"]');
           const qEl=document.getElementById('q-ImpellorBackBody');
@@ -2009,7 +1905,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[42]||'').trim()||get('Front Cover');
+        const qty=get('Front Cover');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="FrontCover"]');
           const qEl=document.getElementById('q-FrontCover');
@@ -2017,7 +1913,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[43]||'').trim()||get('Terminal');
+        const qty=get('Terminal');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Terminal"]');
           const qEl=document.getElementById('q-Terminal');
@@ -2025,7 +1921,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[44]||'').trim()||get('Winding Base');
+        const qty=get('Winding Base');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="WindingBase"]');
           const qEl=document.getElementById('q-WindingBase');
@@ -2033,7 +1929,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[45]||'').trim()||get('Wire & legs');
+        const qty=get('Wire & legs');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="WireLegs"]');
           const qEl=document.getElementById('q-WireLegs');
@@ -2041,7 +1937,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[46]||'').trim()||get('Shaft');
+        const qty=get('Shaft');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Shaft"]');
           const qEl=document.getElementById('q-Shaft');
@@ -2049,7 +1945,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[47]||'').trim()||get('Supply Power Connector');
+        const qty=get('Supply Power Connector');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="PowerConnector"]');
           const qEl=document.getElementById('q-PowerConnector');
@@ -2057,7 +1953,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[48]||'').trim()||get('Cover Plate');
+        const qty=get('Cover Plate');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="CoverPlate"]');
           const qEl=document.getElementById('q-CoverPlate');
@@ -2065,7 +1961,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[49]||'').trim()||get('Fan');
+        const qty=get('Fan');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Fan"]');
           const qEl=document.getElementById('q-Fan');
@@ -2073,7 +1969,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[50]||'').trim()||get('Fan Cover');
+        const qty=get('Fan Cover');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="FanCover"]');
           const qEl=document.getElementById('q-FanCover');
@@ -2081,7 +1977,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[51]||'').trim()||get('Top Cover');
+        const qty=get('Top Cover');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="TopCover"]');
           const qEl=document.getElementById('q-TopCover');
@@ -2089,7 +1985,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[52]||'').trim()||get('Flexible Hose');
+        const qty=get('Flexible Hose');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="FlexibleHose"]');
           const qEl=document.getElementById('q-FlexibleHose');
@@ -2097,7 +1993,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[53]||'').trim()||get('Front Casing');
+        const qty=get('Front Casing');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="FrontCasing"]');
           const qEl=document.getElementById('q-FrontCasing');
@@ -2105,7 +2001,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[54]||'').trim()||get('Anod');
+        const qty=get('Anod');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Anod"]');
           const qEl=document.getElementById('q-Anod');
@@ -2113,7 +2009,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[55]||'').trim()||get('Thermo metre Gauge');
+        const qty=get('Thermo metre Gauge');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="ThermoGauge"]');
           const qEl=document.getElementById('q-ThermoGauge');
@@ -2121,7 +2017,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[56]||'').trim()||get('Filter');
+        const qty=get('Filter');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Filter"]');
           const qEl=document.getElementById('q-Filter');
@@ -2129,7 +2025,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[57]||'').trim()||get('Hook');
+        const qty=get('Hook');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Hook"]');
           const qEl=document.getElementById('q-Hook');
@@ -2137,7 +2033,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[58]||'').trim()||get('Rubber Gasket');
+        const qty=get('Rubber Gasket');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="RubberGasket"]');
           const qEl=document.getElementById('q-RubberGasket');
@@ -2145,7 +2041,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[59]||'').trim()||get('Stator');
+        const qty=get('Stator');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Stator"]');
           const qEl=document.getElementById('q-Stator');
@@ -2153,7 +2049,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[60]||'').trim()||get('Teflon Washer');
+        const qty=get('Teflon Washer');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="TeflonWasher"]');
           const qEl=document.getElementById('q-TeflonWasher');
@@ -2161,7 +2057,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[61]||'').trim()||get('Flange');
+        const qty=get('Flange');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Flange"]');
           const qEl=document.getElementById('q-Flange');
@@ -2169,7 +2065,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[62]||'').trim()||get('Blade/Brush');
+        const qty=get('Blade/Brush');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="BladeBrush"]');
           const qEl=document.getElementById('q-BladeBrush');
@@ -2177,7 +2073,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[63]||'').trim()||get('Knob');
+        const qty=get('Knob');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Knob"]');
           const qEl=document.getElementById('q-Knob');
@@ -2185,7 +2081,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[64]||'').trim()||get('Bowl');
+        const qty=get('Bowl');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Bowl"]');
           const qEl=document.getElementById('q-Bowl');
@@ -2193,7 +2089,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[65]||'').trim()||get('Gasket');
+        const qty=get('Gasket');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Gasket"]');
           const qEl=document.getElementById('q-Gasket');
@@ -2201,7 +2097,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[66]||'').trim()||get('Socket');
+        const qty=get('Socket');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Socket"]');
           const qEl=document.getElementById('q-Socket');
@@ -2209,7 +2105,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[67]||'').trim()||get('Bolt');
+        const qty=get('Bolt');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Bolt"]');
           const qEl=document.getElementById('q-Bolt');
@@ -2217,7 +2113,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[68]||'').trim()||get('Wall Support gasket');
+        const qty=get('Wall Support gasket');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="WallGasket"]');
           const qEl=document.getElementById('q-WallGasket');
@@ -2225,7 +2121,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       })();
       (function(){
-        const qty=String(row[69]||'').trim()||get('Motor');
+        const qty=get('Motor');
         if(qty&&String(qty).trim()!=='0'&&String(qty).trim()!==''){
           const btn=document.querySelector('.part[data-k="Motor"]');
           const qEl=document.getElementById('q-Motor');
@@ -2234,7 +2130,7 @@ function loadReportFromSheet(ri, cacheOverride){
       })();
       // Restore Others Parts
       (function(){
-        const othersVal=String(row[70]||'').trim()||get('Others Parts');
+        const othersVal=get('Others Parts');
         if(othersVal&&String(othersVal).trim()!==''){
           const btn=document.getElementById('part-others');
           const wrap=document.getElementById('others-remark-wrap');
@@ -2263,28 +2159,30 @@ function loadReportFromSheet(ri, cacheOverride){
     setTimeout(()=>{
       const fmap2={
         't-complaint-no': String(row[1]||'').trim(),
-        't-dept':         String(row[7]||'').trim(),
-        't-date':         toDateInput(String(row[14]||'').trim()),
-        't-date-time':    toTimeInput(String(row[15]||'').trim()),
-        't-attended':     toDateInput(String(row[21]||'').trim()),
-        't-attended-time':toTimeInput(String(row[22]||'').trim()),
-        't-location':     String(row[71]||'').trim(),
-        't-assigned-to':  String(row[25]||'').trim(),
-        't-se':           String(row[9]||'').trim(),
-        't-month':        String(row[23]||'').trim(),
+        't-dept':         String(row[9]||'').trim(),
+        't-date':         toDateInput(String(row[16]||'').trim()),
+        't-date-time':    toTimeInput(String(row[17]||'').trim()),
+        't-attended':     toDateInput(String(row[23]||'').trim()),
+        't-attended-time':toTimeInput(String(row[24]||'').trim()),
+        't-assigned-to':  String(row[27]||'').trim(),
+        't-se':           String(row[11]||'').trim(),
+        't-month':        String(row[25]||'').trim(),
         't-dealer':       String(row[2]||'').trim(),
         't-house':        String(row[3]||'').trim(),
-        't-road':         String(row[4]||'').trim(),
-        't-block':        String(row[5]||'').trim(),
-        't-area':         String(row[8]||'').trim(),
-        't-pcode':        String(row[10]||'').trim(),
-        't-pdesc':        String(row[11]||'').trim(),
-        't-qty':          String(row[12]||'').trim(),
-        't-serial':       String(row[18]||'').trim(),
-        't-mfg':          String(row[19]||'').trim(),
-        't-dop':          toDateInput(String(row[17]||'').trim()),
-        't-remark':       String(row[16]||'').trim(),
-        't-replaced':     String(row[28]||'').trim(),
+        't-building':     String(row[4]||'').trim(),
+        't-location':     String(row[7]||'').trim(),
+        't-road':         String(row[5]||'').trim(),
+        't-block':        String(row[6]||'').trim(),
+        't-area':         String(row[10]||'').trim(),
+        't-pcode':        String(row[12]||'').trim(),
+        't-pdesc':        String(row[13]||'').trim(),
+        't-qty':          String(row[14]||'').trim(),
+        't-serial':       String(row[20]||'').trim(),
+        't-mfg':          String(row[21]||'').trim(),
+        't-dop':          toDateInput(String(row[19]||'').trim()),
+        't-remark':       String(row[18]||'').trim(),
+        't-warr':         String(row[27]||'').trim(),
+        't-replaced':     String(row[30]||'').trim(),
       };
       Object.entries(fmap2).forEach(([id,val])=>{
         const el=document.getElementById(id);
@@ -2328,7 +2226,7 @@ function loadReportFromSheet(ri, cacheOverride){
         }
       }
       // Contacts
-      const cd2=String(row[6]||'').trim()||get('Client Contact');
+      const cd2=get('Client Contact');
       if(cd2){ const pts=cd2.split(' / ');
         const c1=document.getElementById('t-contact1'); const c2=document.getElementById('t-contact2');
         if(c1) c1.value=(pts[0]||'').trim(); if(c2) c2.value=(pts[1]||'').trim();
@@ -2338,7 +2236,7 @@ function loadReportFromSheet(ri, cacheOverride){
       const natVal2=String(row[13]||'').trim();
       if(natEl2&&natVal2){ natEl2.value=natVal2; if(typeof tToggleNatureOther==='function') tToggleNatureOther(); }
       // Status
-      const stVal2=String(row[24]||'').trim()||get('Status');
+      const stVal2=String(row[26]||'').trim()||get('Status');
       if(stVal2){ tSelStatus=stVal2;
         document.querySelectorAll('.st').forEach(b=>{
           b.classList.remove('on-repair','on-replace','on-void','on-noproblem');
@@ -2389,7 +2287,7 @@ function loadReportFromSheet(ri, cacheOverride){
         if(ta) ta.value=othersVal2;
       }
       // Workflow status
-      _wfStatus=String(row[26]||'').trim()||'Pending';
+      _wfStatus=String(row[28]||'').trim()||'Pending';
       // Track for update
       const loadedSi3=get('Si');
       const siH3=document.getElementById('t-si-hidden');
@@ -2444,7 +2342,7 @@ function enterRole(role){
   document.getElementById('screen-tech').classList.add('active');
   applyRoleUI(role);
   initTech();
-  if(role==='sales'){ document.getElementById('t-complaint-no').value='⏳ Will be assigned on submit'; }
+  if(role==='sales') generateComplaintNo();
   window.scrollTo(0,0);
 }
 
@@ -2525,7 +2423,46 @@ function goLogin(){
   window.scrollTo(0,0);
 }
 
-// CIS number now assigned atomically during save in Apps Script
+function generateComplaintNo(){
+  const el=document.getElementById('t-complaint-no');
+  if(!el) return;
+  el.value='⏳ Generating…';
+  const gsUrl=getGsUrl();
+  // Use server-side generation via Apps Script LockService
+  // to prevent duplicate CIS numbers when multiple users submit simultaneously
+  const cbName='_bscCN'+Date.now();
+  let done=false;
+  let sc;
+  const finish=function(data){
+    if(done) return; done=true;
+    delete window[cbName];
+    if(sc&&sc.parentNode) sc.remove();
+    if(data&&data.complaintNo){
+      // Server returned a unique locked CIS number
+      el.value=data.complaintNo;
+      toast('📋 Complaint No: '+data.complaintNo);
+    } else {
+      // Fallback: timestamp-based to avoid blanks
+      const now=new Date();
+      const ts='CIS-T'+now.getFullYear().toString().slice(2)+
+        String(now.getMonth()+1).padStart(2,'0')+
+        String(now.getDate()).padStart(2,'0')+
+        String(now.getHours()).padStart(2,'0')+
+        String(now.getMinutes()).padStart(2,'0')+
+        String(now.getSeconds()).padStart(2,'0');
+      el.value=ts;
+      toast('📋 Complaint No: '+ts);
+    }
+  };
+  window[cbName]=finish;
+  sc=document.createElement('script');
+  sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=generateCIS&sheetTab=Reports&callback='+cbName;
+  sc.onerror=function(){ finish(null); };
+  setTimeout(function(){ finish(null); }, 10000);
+  document.head.appendChild(sc);
+}
+// ══ SEARCH ══
+let _searchCache = null;
 
 function openSearch(){
   openModal('search-modal');
@@ -2712,132 +2649,6 @@ function tGetPcode(){
   const m=document.getElementById('t-pcode-manual');
   return (m&&m.style.display!=='none'&&m.value.trim())?m.value.trim():document.getElementById('t-pcode').value.trim();
 }
-
-// ── iOS Custom Dropdown ──────────────────────────────
-const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-let _iosDD = { targetId:'', items:[], withOther:false };
-
-function iosOpenDD(targetId, title, items, withOther){
-  _iosDD = { targetId, items, withOther };
-  const overlay = document.getElementById('ios-dd-overlay');
-  const listEl  = document.getElementById('ios-dd-list');
-  const searchEl= document.getElementById('ios-dd-search');
-  const titleEl = document.getElementById('ios-dd-title');
-  titleEl.textContent = title;
-  searchEl.value = '';
-  iosRenderDD(items, withOther);
-  overlay.style.display = 'block';
-  setTimeout(()=>searchEl.focus(), 200);
-}
-
-function iosRenderDD(items, withOther){
-  const listEl = document.getElementById('ios-dd-list');
-  listEl.innerHTML = '';
-  items.forEach(function(item){
-    const val  = item.value||item;
-    const text = item.text||item;
-    const sub  = item.sub||'';
-    const div = document.createElement('div');
-    div.className = 'ios-dropdown-item';
-    div.innerHTML = '<span>' + text + (sub ? '<span class="item-sub">'+sub+'</span>' : '') + '</span>';
-    div.addEventListener('click', function(){ iosSelectDD(val); });
-    listEl.appendChild(div);
-  });
-  if(withOther){
-    const div = document.createElement('div');
-    div.className = 'ios-dropdown-item';
-    div.style.cssText = 'color:#1565C0;font-weight:600';
-    div.textContent = '+ OTHER — type manually';
-    div.addEventListener('click', iosSelectOther);
-    listEl.appendChild(div);
-  }
-}
-
-function iosFilterDD(q){
-  q = q.toLowerCase();
-  const filtered = _iosDD.items.filter(function(item){
-    const text = (item.text||item).toLowerCase();
-    const val  = (item.value||item).toLowerCase();
-    return text.includes(q)||val.includes(q);
-  });
-  iosRenderDD(filtered, _iosDD.withOther);
-}
-
-function iosSelectDD(val){
-  const el = document.getElementById(_iosDD.targetId);
-  if(el){
-    el.value = val;
-    el.dispatchEvent(new Event('input'));
-    el.dispatchEvent(new Event('change'));
-  }
-  iosCloseDD();
-}
-
-function iosSelectOther(){
-  const el = document.getElementById(_iosDD.targetId);
-  if(el){
-    if(_iosDD.targetId === 't-pcode'){
-      tPcodeOther();
-    } else {
-      tHandleOther(el, _iosDD.targetId+'-list');
-    }
-  }
-  iosCloseDD();
-}
-
-function iosCloseDD(){
-  document.getElementById('ios-dd-overlay').style.display='none';
-}
-
-// Patch input fields to open iOS dropdown on iOS devices
-function iosPathField(inputId, title, items, withOther){
-  const el = document.getElementById(inputId);
-  if(!el || !_isIOS) return;
-  // Remove datalist association on iOS (doesn't work anyway)
-  el.removeAttribute('list');
-  // Open custom dropdown on focus
-  el.addEventListener('focus', function(e){
-    e.preventDefault();
-    el.blur();
-    iosOpenDD(inputId, title, items, withOther);
-  });
-}
-
-// Initialize iOS patches after DOM ready
-window.addEventListener('load', function(){
-  if(!_isIOS) return;
-
-  // Area dropdown
-  iosPathField('t-area', 'Select Area', [
-    'Aali','Adliya','Amwaj','Arad','Askar','Awali','Barbar','Budaiya','Busaiteen',
-    'Damistan','Diraz','Duraz','East Riffa','Galali','Gudaibiya','Hamad Town',
-    'Hamala','Hidd','Isa Town','Jidhafs','Jid Ali','Juffair','Karrana','Karzakkan',
-    'Malikiya','Manama','Markh','Muharraq','Nabih Saleh','Nuwaidrat','Qalali',
-    'Riffa','Saad','Saar','Sakhir','Salman City','Sanabis','Seef','Sehla',
-    'Sitra','Tubli','Um Al Hassam','Wadi Al Sail','Zallaq','Zinj'
-  ].map(function(a){ return {value:a,text:a}; }), true);
-
-  // Dealer dropdown
-  const dealerEl = document.getElementById('t-dealer-list');
-  if(dealerEl){
-    const dealerOpts = Array.from(dealerEl.options).map(function(o){ return {value:o.value||o.text,text:o.text}; });
-    iosPathField('t-dealer','Select Client / Dealer', dealerOpts, true);
-  }
-
-  // Assigned To dropdown
-  iosPathField('t-assigned-to','Select Technician',[
-    'Ajeeth','Hassan','Vishal','Ajeet Kumar','Hasan',
-    'Prem / Vishal','Vishal / Ajeeth','Vishal / Hasan'
-  ].map(function(a){ return {value:a,text:a}; }), false);
-
-  // Product Code dropdown
-  const pcodeEl = document.getElementById('t-pcode-list');
-  if(pcodeEl){
-    const pcodeOpts = Array.from(pcodeEl.options).map(function(o){ return {value:o.value||o.text,text:o.value,sub:o.text}; });
-    iosPathField('t-pcode','Select Product Code', pcodeOpts, true);
-  }
-});
 
 </script>
 </body>
