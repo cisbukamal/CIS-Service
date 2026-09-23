@@ -150,6 +150,19 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-confirm{background:var(--navy);color:#fff}
 .btn-cancel{background:var(--bg);color:var(--t2)}
 .rcard{border:1.5px solid var(--border);border-radius:var(--rs);padding:12px;background:#F8FAFC;margin-bottom:8px}
+
+/* ── iOS Custom Dropdown ─────────────────────────── */
+.ios-dropdown-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:9999;}
+.ios-dropdown-sheet{position:absolute;bottom:0;left:0;width:100%;background:#fff;border-radius:16px 16px 0 0;max-height:60vh;display:flex;flex-direction:column;box-shadow:0 -4px 20px rgba(0,0,0,0.15);}
+.ios-dropdown-header{padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;}
+.ios-dropdown-header span{font-weight:600;font-size:15px;color:#0C3B6E;}
+.ios-dropdown-close{background:#F5F5F5;border:none;border-radius:20px;padding:4px 12px;font-size:13px;color:#555;cursor:pointer;}
+.ios-dropdown-search{margin:8px 12px;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:Inter,sans-serif;outline:none;}
+.ios-dropdown-list{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;}
+.ios-dropdown-item{padding:13px 16px;border-bottom:1px solid #f0f0f0;font-size:14px;color:#222;cursor:pointer;}
+.ios-dropdown-item:active{background:#EEF5FF;}
+.ios-dropdown-item .item-sub{font-size:11px;color:#888;display:block;}
+
 </style>
 </head>
 <body>
@@ -262,7 +275,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
           <input type="text" id="t-se" placeholder="Enter name…">
         </div>
         <div class="field">
-          <label>Complaint Details</label>
+          <label>Complaint Details/Remarks</label>
           <input type="text" id="t-month" placeholder="Enter complaint details…">
         </div>
       </div>
@@ -286,10 +299,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
         <div class="field"><label>Contact 1 <span class="req">*</span></label><input type="tel" id="t-contact1" placeholder="e.g. 39123456" inputmode="numeric"></div>
         <div class="field"><label>Contact 2</label><input type="tel" id="t-contact2" placeholder="optional"></div>
       </div>
-      <div class="row3">
-        <div class="field"><label>House <span class="req">*</span></label><input type="text" id="t-house" placeholder="No."></div>
-        <div class="field"><label>Road <span class="req">*</span></label><input type="text" id="t-road" placeholder="No."></div>
-        <div class="field"><label>Block <span class="req">*</span></label><input type="text" id="t-block" placeholder="No."></div>
+      <div class="row2">
+        <div class="field"><label>Flat</label><input type="text" id="t-house" placeholder="Flat no."></div>
+        <div class="field"><label>Building</label><input type="text" id="t-building" placeholder="Building name/no."></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Road</label><input type="text" id="t-road" placeholder="Road no."></div>
+        <div class="field"><label>Block</label><input type="text" id="t-block" placeholder="Block no."></div>
+      </div>
+      <div class="field">
+        <label>📍 Location Link</label>
+        <input type="url" id="t-location" placeholder="Paste Google Maps link here…" autocomplete="off" style="font-size:12px">
+      </div
       </div>
     </div>
   </div>
@@ -621,7 +642,7 @@ Object.entries(PRODUCTS).forEach(([k,v])=>{ DESC_TO_CODE[v.toLowerCase()]=k; });
 
 // ══ FORCE URL UPDATE ══
 (function(){
-  const forced='https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
+  const forced='https://script.google.com/macros/s/AKfycbwxN0uuhEZPxNaAY_1Q0i7U06HxPchVC9F2xpanUMitMtxK6uNE0ayrHNABQ-Gv5pxH/exec';
   const saved=localStorage.getItem('bsc_gs_url');
   // Always overwrite if saved URL is different from the current hardcoded one
   if(saved !== forced) localStorage.setItem('bsc_gs_url', forced);
@@ -643,7 +664,7 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3800);
 }
 function getGsUrl(){
-  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
+  return localStorage.getItem('bsc_gs_url')||'https://script.google.com/macros/s/AKfycbwxN0uuhEZPxNaAY_1Q0i7U06HxPchVC9F2xpanUMitMtxK6uNE0ayrHNABQ-Gv5pxH/exec';
 }
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
@@ -678,7 +699,7 @@ function goLogin(){
 
 // ══ SETTINGS ══
 function openSettings(){
-  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbzZxmDAbzw2dEO8ibdCIRlHwd3DfixAa3ysf5waem37I7Kz1TmaPGhOdP8sUaC_g4xr/exec';
+  document.getElementById('settings-gs-url').value=getGsUrl()||'https://script.google.com/macros/s/AKfycbwxN0uuhEZPxNaAY_1Q0i7U06HxPchVC9F2xpanUMitMtxK6uNE0ayrHNABQ-Gv5pxH/exec';
   document.getElementById('settings-sheet-url').value=localStorage.getItem('bsc_sheet_url')||'https://docs.google.com/spreadsheets/d/1BP5IBatJzjUbnsZDMOmiU1sRP37mQyEgxmjl_PLpKsU/edit?gid=0#gid=0';
   openModal('settings-modal');
 }
@@ -856,7 +877,7 @@ function tGeneratePDF(fname){
   doc.setFillColor(12,59,110); doc.rect(0,0,W,22,'F');
   doc.setTextColor(255,255,255);
   doc.setFontSize(15); doc.setFont('helvetica','bold');
-  doc.text('CIS COMPLAINT SERVICE REPORT', W/2, 10, {align:'center'});
+  doc.text('COMPLAINT SERVICE REPORT', W/2, 10, {align:'center'});
   doc.setFontSize(8); doc.setFont('helvetica','normal');
   doc.text('Bukamal  \u00b7  RDMS/FM/04  \u00b7  Issue 1', W/2, 17, {align:'center'});
 
@@ -876,7 +897,7 @@ function tGeneratePDF(fname){
   field2('Complaint Date Received', tv('t-date'), 'Received Time', fmtTime12(tv('t-date-time')));
   field2('Attended On', tv('t-attended'), 'Attended Time', fmtTime12(tv('t-attended-time')));
   field2('Assigned To', tv('t-assigned-to'), 'Submitted By', tv('t-se'));
-  field2('Complaint Details', tv('t-month'), 'Area', tv('t-area'));
+  field2('Complaint Details/Remarks', tv('t-month'), 'Area', tv('t-area'));
 
   // ── 2. CLIENT & LOCATION ─────────────────────────────
   band('CLIENT & LOCATION');
@@ -1087,6 +1108,11 @@ function tValidate(){
   const isSales  = _currentRole==='sales';
   const isCoord  = _currentRole==='coord';
   const isTech   = _currentRole==='tech';
+  // Coordinator and Technician MUST load from history — not create new complaints
+  if((isCoord||isTech) && !tv('t-complaint-no')){
+    toast('⚠️ Please load a complaint from 📂 History first, then update.');
+    return false;
+  }
 
   // Coordinator and Technician MUST load from history — not create new complaints
   if((isCoord||isTech) && !tv('t-complaint-no')){
@@ -1263,12 +1289,28 @@ async function tSaveToSheets(){
   if(saveBtn) saveBtn.style.opacity='0.5';
 
   try{
-    await fetch(gsUrl,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain;charset=UTF-8'},
-      body:JSON.stringify(payload)
-    });
+    let savedCIS = compNo;
+    const isNewRow = !payload.action || payload.action !== 'updateRow';
+    if(isNewRow){
+      try{
+        const resp = await fetch(gsUrl,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=UTF-8'},
+          body:JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if(data && data.complaintNo){
+          savedCIS = data.complaintNo.replace(/^CIS-/,'');
+          const elCIS = document.getElementById('t-complaint-no');
+          if(elCIS) elCIS.value = savedCIS;
+          toast('📋 Complaint No: '+savedCIS);
+        }
+      }catch(corsErr){
+        await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
+      }
+    } else {
+      await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
+    }
     // Mark complaint as existing — all future saves by any role will updateRow
     window._savedComplaints['updated_'+compNo] = true;
     // Keep _editingRow alive with complaint no for subsequent saves
@@ -1294,8 +1336,10 @@ function tOpenWA(){
   const fname=tGetFname();
   const st=tSelStatus||tv('t-status-custom');
   const house=tv('t-house'); const road=tv('t-road'); const block=tv('t-block');
-  const address=[house?'House '+house:'',road?'Road '+road:'',block?'Block '+block:'',tv('t-area')]
+  const address=[house?'Flat '+house:'',tv('t-building')?'Bldg '+tv('t-building'):'',road?'Road '+road:'',block?'Block '+block:'',tv('t-area')]
     .filter(Boolean).join(', ');
+    const locLink=tv('t-location');
+    const locationLine=locLink?('\n📌 Location: '+locLink):'';
   const remark=tv('t-remark');
   const compNo=tv('t-complaint-no');
 
@@ -1305,7 +1349,7 @@ function tOpenWA(){
       '🔧 *CIS New Complaint — '+compNo+'*\n━━━━━━━━━━━━━━━\n'+
       '🏠 *Client:* '+tv('t-dealer')+'\n'+
       '📞 *Contact:* '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\n'+
-      '📍 *Address:* '+address+'\n'+
+      '📍 *Address:* '+address+locationLine+'\n'+
       '🏢 *Dept:* '+tv('t-dept')+'\n'+
       '🔩 *Product:* '+tv('t-pcode')+' — '+tv('t-pdesc')+'\n'+
       '📋 *Nature:* '+document.getElementById('t-nature').value+'\n'+
@@ -1327,7 +1371,7 @@ function tOpenWA(){
         '👷 Assigned Technician: '+(tv('t-assigned-to')||tv('t-tech'))+'\n'+
         '🏠 Client: '+tv('t-dealer')+'\n'+
         '📞 Contact: '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\n'+
-        '📍 Address: '+address+'\n'+
+        '📍 Address: '+address+locationLine+'\n'+
         '🏢 Dept: '+tv('t-dept')+'\n'+
         '📅 Attended: '+tv('t-attended')+'\n'+
         '🔧 Complaint: '+document.getElementById('t-nature').value+'\n'+
@@ -1350,7 +1394,7 @@ function tOpenWA(){
       '👷 Assigned To: '+(tv('t-assigned-to')||tv('t-tech'))+'\n'+
       '🏠 Client: '+tv('t-dealer')+'\n'+
       '📞 Contact: '+tv('t-contact1')+(tv('t-contact2')?' / '+tv('t-contact2'):'')+'\\n'+
-      '📍 Address: '+address+'\n'+
+      '📍 Address: '+address+locationLine+'\n'+
       '🔧 Status: *'+st+'*'+'\n'+
       '📋 Remark: '+(remark.substring(0,120)+(remark.length>120?'…':''))+'\n'+
       '━━━━━━━━━━━━━━━'+'\n'+
@@ -1445,12 +1489,28 @@ async function sSaveToSheets(){
   payload['Excel File']=fname+'.xlsx';
   const gsUrl=getGsUrl();
   try{
-    await fetch(gsUrl,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain;charset=UTF-8'},
-      body:JSON.stringify(payload)
-    });
+    let savedCIS = compNo;
+    const isNewRow = !payload.action || payload.action !== 'updateRow';
+    if(isNewRow){
+      try{
+        const resp = await fetch(gsUrl,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=UTF-8'},
+          body:JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if(data && data.complaintNo){
+          savedCIS = data.complaintNo.replace(/^CIS-/,'');
+          const elCIS = document.getElementById('t-complaint-no');
+          if(elCIS) elCIS.value = savedCIS;
+          toast('📋 Complaint No: '+savedCIS);
+        }
+      }catch(corsErr){
+        await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
+      }
+    } else {
+      await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
+    }
     saveLocalReport('sales',fname,true);
     toast('✅ Saved to Google Sheets!');
     sLoadedKey=null;
@@ -2342,7 +2402,7 @@ function enterRole(role){
   document.getElementById('screen-tech').classList.add('active');
   applyRoleUI(role);
   initTech();
-  if(role==='sales') generateComplaintNo();
+  if(role==='sales'){ document.getElementById('t-complaint-no').value='⏳ Will be assigned on submit'; }
   window.scrollTo(0,0);
 }
 
@@ -2423,46 +2483,7 @@ function goLogin(){
   window.scrollTo(0,0);
 }
 
-function generateComplaintNo(){
-  const el=document.getElementById('t-complaint-no');
-  if(!el) return;
-  el.value='⏳ Generating…';
-  const gsUrl=getGsUrl();
-  // Use server-side generation via Apps Script LockService
-  // to prevent duplicate CIS numbers when multiple users submit simultaneously
-  const cbName='_bscCN'+Date.now();
-  let done=false;
-  let sc;
-  const finish=function(data){
-    if(done) return; done=true;
-    delete window[cbName];
-    if(sc&&sc.parentNode) sc.remove();
-    if(data&&data.complaintNo){
-      // Server returned a unique locked CIS number
-      el.value=data.complaintNo;
-      toast('📋 Complaint No: '+data.complaintNo);
-    } else {
-      // Fallback: timestamp-based to avoid blanks
-      const now=new Date();
-      const ts='CIS-T'+now.getFullYear().toString().slice(2)+
-        String(now.getMonth()+1).padStart(2,'0')+
-        String(now.getDate()).padStart(2,'0')+
-        String(now.getHours()).padStart(2,'0')+
-        String(now.getMinutes()).padStart(2,'0')+
-        String(now.getSeconds()).padStart(2,'0');
-      el.value=ts;
-      toast('📋 Complaint No: '+ts);
-    }
-  };
-  window[cbName]=finish;
-  sc=document.createElement('script');
-  sc.src=gsUrl+(gsUrl.includes('?')?'&':'?')+'action=generateCIS&sheetTab=Reports&callback='+cbName;
-  sc.onerror=function(){ finish(null); };
-  setTimeout(function(){ finish(null); }, 10000);
-  document.head.appendChild(sc);
-}
-// ══ SEARCH ══
-let _searchCache = null;
+// CIS number assigned atomically during save
 
 function openSearch(){
   openModal('search-modal');
@@ -2649,6 +2670,94 @@ function tGetPcode(){
   const m=document.getElementById('t-pcode-manual');
   return (m&&m.style.display!=='none'&&m.value.trim())?m.value.trim():document.getElementById('t-pcode').value.trim();
 }
+
+// ── iOS Custom Dropdown ──────────────────────────────
+const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+let _iosDD = { targetId:'', items:[], withOther:false };
+
+function iosOpenDD(targetId, title, items, withOther){
+  _iosDD = { targetId, items, withOther };
+  document.getElementById('ios-dd-title').textContent = title;
+  document.getElementById('ios-dd-search').value = '';
+  iosRenderDD(items, withOther);
+  document.getElementById('ios-dd-overlay').style.display = 'block';
+  setTimeout(()=>document.getElementById('ios-dd-search').focus(), 200);
+}
+
+function iosRenderDD(items, withOther){
+  const listEl = document.getElementById('ios-dd-list');
+  listEl.innerHTML = '';
+  items.forEach(function(item){
+    const val = item.value||item; const text = item.text||item; const sub = item.sub||'';
+    const div = document.createElement('div');
+    div.className = 'ios-dropdown-item';
+    div.innerHTML = '<span>'+text+(sub?'<span class="item-sub">'+sub+'</span>':'')+'</span>';
+    div.addEventListener('click', function(){ iosSelectDD(val); });
+    listEl.appendChild(div);
+  });
+  if(withOther){
+    const div = document.createElement('div');
+    div.className = 'ios-dropdown-item';
+    div.style.cssText = 'color:#1565C0;font-weight:600';
+    div.textContent = '+ OTHER — type manually';
+    div.addEventListener('click', iosSelectOther);
+    listEl.appendChild(div);
+  }
+}
+
+function iosFilterDD(q){
+  q = q.toLowerCase();
+  const filtered = _iosDD.items.filter(function(item){
+    return (item.text||item).toLowerCase().includes(q)||(item.value||item).toLowerCase().includes(q);
+  });
+  iosRenderDD(filtered, _iosDD.withOther);
+}
+
+function iosSelectDD(val){
+  const el = document.getElementById(_iosDD.targetId);
+  if(el){ el.value = val; el.dispatchEvent(new Event('input')); el.dispatchEvent(new Event('change')); }
+  iosCloseDD();
+}
+
+function iosSelectOther(){
+  if(_iosDD.targetId==='t-pcode') tPcodeOther();
+  else { const el=document.getElementById(_iosDD.targetId); if(el) tHandleOther(el,_iosDD.targetId+'-list'); }
+  iosCloseDD();
+}
+
+function iosCloseDD(){ document.getElementById('ios-dd-overlay').style.display='none'; }
+
+function iosPathField(inputId, title, items, withOther){
+  const el = document.getElementById(inputId);
+  if(!el || !_isIOS) return;
+  el.removeAttribute('list');
+  el.addEventListener('focus', function(e){ e.preventDefault(); el.blur(); iosOpenDD(inputId, title, items, withOther); });
+}
+
+window.addEventListener('load', function(){
+  if(!_isIOS) return;
+  iosPathField('t-area','Select Area',[
+    'Aali','Adliya','Amwaj','Arad','Askar','Awali','Barbar','Budaiya','Busaiteen',
+    'Damistan','Diraz','Duraz','East Riffa','Galali','Gudaibiya','Hamad Town',
+    'Hamala','Hidd','Isa Town','Jidhafs','Jid Ali','Juffair','Karrana','Karzakkan',
+    'Malikiya','Manama','Markh','Muharraq','Nabih Saleh','Nuwaidrat','Qalali',
+    'Riffa','Saad','Saar','Sakhir','Salman City','Sanabis','Seef','Sehla',
+    'Sitra','Tubli','Um Al Hassam','Wadi Al Sail','Zallaq','Zinj'
+  ].map(function(a){return{value:a,text:a};}),true);
+  const dealerEl=document.getElementById('t-dealer-list');
+  if(dealerEl){
+    const opts=Array.from(dealerEl.options).map(function(o){return{value:o.value||o.text,text:o.text};});
+    iosPathField('t-dealer','Select Client / Dealer',opts,true);
+  }
+  iosPathField('t-assigned-to','Select Technician',[
+    'Ajeeth','Hassan','Vishal','Ajeet Kumar','Hasan','Prem / Vishal','Vishal / Ajeeth','Vishal / Hasan'
+  ].map(function(a){return{value:a,text:a};}),false);
+  const pcodeEl=document.getElementById('t-pcode-list');
+  if(pcodeEl){
+    const opts=Array.from(pcodeEl.options).map(function(o){return{value:o.value||o.text,text:o.value,sub:o.text};});
+    iosPathField('t-pcode','Select Product Code',opts,true);
+  }
+});
 
 </script>
 </body>
