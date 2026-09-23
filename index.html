@@ -1254,9 +1254,16 @@ async function tSaveToSheets(){
 
   // ── SAVE GUARD — prevent double tap ──────────────────
   if(window._bscSaving){
-    toast('⏳ Already saving, please wait…');
+    toast('⏳ Already saving — please wait…');
     return;
   }
+  // Also block if saved in last 3 seconds (belt+suspenders against double tap)
+  const now = Date.now();
+  if(window._lastSaveTime && (now - window._lastSaveTime) < 3000){
+    toast('✅ Already saved — tap again in a moment if needed');
+    return;
+  }
+  window._lastSaveTime = now;
   if(!window._savedComplaints) window._savedComplaints = {};
 
   // DUPLICATE PREVENTION — definitive logic:
@@ -1313,15 +1320,18 @@ async function tSaveToSheets(){
     } else {
       await fetch(gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
     }
-    // Mark complaint as existing — all future saves by any role will updateRow
-    window._savedComplaints['updated_'+compNo] = true;
-    // Keep _editingRow alive with complaint no for subsequent saves
+    // Mark complaint as existing using the ACTUAL saved CIS number
+    // (savedCIS may differ from compNo if server assigned a new number)
+    window._savedComplaints['updated_'+savedCIS] = true;
+    window._savedComplaints['updated_'+compNo] = true; // also track original
+    // Keep _editingRow alive so next tap does updateRow not newRow
     if(!window._editingRow) window._editingRow = {};
-    window._editingRow.complaintNo = compNo;
+    window._editingRow.complaintNo = savedCIS;
+    window._editingRow.si = payload['Si']||'';
+    // Set tLoadedKey so isCIS logic recognises this as existing
+    tLoadedKey = '__sheet__'+savedCIS;
     saveLocalReport('tech',fname,true);
     toast(payload['action']==='updateRow'?'✅ Record updated in Google Sheets!':'✅ Saved to Google Sheets!');
-    tLoadedKey=null;
-    window._editingRow=null;
     const bn=document.getElementById('edit-banner-tech');
     if(bn) bn.style.display='none';
   }catch(e){
@@ -2348,8 +2358,8 @@ function loadReportFromSheet(ri, cacheOverride){
         if(wrap) wrap.style.display='block';
         if(ta) ta.value=othersVal2;
       }
-      // Workflow status
-      _wfStatus=String(row[28]||'').trim()||'Pending';
+      // Workflow status — always use role's configured value, not loaded value
+      // _wfStatus stays as set by enterRole() for this role
       // Track for update
       const loadedSi3=get('Si');
       const siH3=document.getElementById('t-si-hidden');
