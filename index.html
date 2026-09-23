@@ -152,8 +152,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .rcard{border:1.5px solid var(--border);border-radius:var(--rs);padding:12px;background:#F8FAFC;margin-bottom:8px}
 
 /* ── iOS Custom Dropdown ─────────────────────────── */
-.ios-dropdown-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:9999;}
-.ios-dropdown-sheet{position:absolute;bottom:0;left:0;width:100%;background:#fff;border-radius:16px 16px 0 0;max-height:60vh;display:flex;flex-direction:column;box-shadow:0 -4px 20px rgba(0,0,0,0.15);}
+.ios-dropdown-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;-webkit-overflow-scrolling:touch;}
+.ios-dropdown-sheet{position:fixed;bottom:0;left:0;width:100%;background:#fff;border-radius:16px 16px 0 0;max-height:70vh;display:flex;flex-direction:column;box-shadow:0 -4px 20px rgba(0,0,0,0.2);padding-bottom:env(safe-area-inset-bottom,0);}
 .ios-dropdown-header{padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;}
 .ios-dropdown-header span{font-weight:600;font-size:15px;color:#0C3B6E;}
 .ios-dropdown-close{background:#F5F5F5;border:none;border-radius:20px;padding:4px 12px;font-size:13px;color:#555;cursor:pointer;}
@@ -903,7 +903,9 @@ function tGeneratePDF(fname){
   band('CLIENT & LOCATION');
   field1('Dealer / Client / Contractor', tv('t-dealer'));
   field2('Contact Number 1', tv('t-contact1'), 'Contact Number 2', tv('t-contact2'));
-  field3('House', tv('t-house'), 'Road', tv('t-road'), 'Block', tv('t-block'));
+  field2('Flat', tv('t-house'), 'Building', tv('t-building'));
+  field2('Road', tv('t-road'), 'Block', tv('t-block'));
+  if(tv('t-location')) field1('📍 Location Link', tv('t-location'));
 
   // ── 3. PRODUCT ───────────────────────────────────────
   band('PRODUCT');
@@ -1262,7 +1264,7 @@ async function tSaveToSheets(){
   // Any save with an existing CIS number MUST be an update, never a new row.
   // Only truly new complaints (freshly generated CIS from Sales Team) go as newRow.
   const er = window._editingRow||{};
-  const isCIS = compNo && compNo.startsWith('CIS-');
+  const isCIS = compNo && (compNo.startsWith('CIS-') || /^\d{4,}$/.test(compNo.trim()));
   const wasLoaded = (tLoadedKey && tLoadedKey.startsWith('__sheet__'));
   const wasSaved  = compNo && window._savedComplaints['updated_'+compNo];
   const hasEr     = er.complaintNo && er.complaintNo === compNo;
@@ -2715,14 +2717,27 @@ function iosFilterDD(q){
 
 function iosSelectDD(val){
   const el = document.getElementById(_iosDD.targetId);
-  if(el){ el.value = val; el.dispatchEvent(new Event('input')); el.dispatchEvent(new Event('change')); }
+  if(el){
+    el.value = val;
+    el.dispatchEvent(new Event('input'));
+    el.dispatchEvent(new Event('change'));
+  }
   iosCloseDD();
 }
 
 function iosSelectOther(){
-  if(_iosDD.targetId==='t-pcode') tPcodeOther();
-  else { const el=document.getElementById(_iosDD.targetId); if(el) tHandleOther(el,_iosDD.targetId+'-list'); }
+  const el = document.getElementById(_iosDD.targetId);
+  if(_iosDD.targetId==='t-pcode'){
+    tPcodeOther();
+  } else if(el) {
+    el.removeAttribute('readonly');
+    el.style.caretColor = '';
+    el.value = '';
+    el.placeholder = 'Type manually…';
+    tHandleOther(el, _iosDD.targetId+'-list');
+  }
   iosCloseDD();
+  if(el && _iosDD.targetId!=='t-pcode') setTimeout(function(){ el.focus(); }, 300);
 }
 
 function iosCloseDD(){ document.getElementById('ios-dd-overlay').style.display='none'; }
@@ -2731,7 +2746,18 @@ function iosPathField(inputId, title, items, withOther){
   const el = document.getElementById(inputId);
   if(!el || !_isIOS) return;
   el.removeAttribute('list');
-  el.addEventListener('focus', function(e){ e.preventDefault(); el.blur(); iosOpenDD(inputId, title, items, withOther); });
+  el.setAttribute('readonly', 'readonly');
+  el.style.cursor = 'pointer';
+  el.style.caretColor = 'transparent';
+  el.addEventListener('touchstart', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    iosOpenDD(inputId, title, items, withOther);
+  }, {passive:false});
+  el.addEventListener('click', function(e){
+    e.preventDefault();
+    iosOpenDD(inputId, title, items, withOther);
+  });
 }
 
 window.addEventListener('load', function(){
